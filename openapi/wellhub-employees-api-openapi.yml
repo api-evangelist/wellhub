@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: Integrations Companies Employees API
+  description: 'Integrations exposes a public API for Wellhub clients.
+
+
+    ### API Credentials Tutorial
+
+
+    To interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:
+
+
+    1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.
+
+    2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.
+
+    3. **Use the token**: Include it in every subsequent request as follows:
+
+
+    ```
+
+    ''Authorization'': ''Bearer YOUR_ACCESS_TOKEN_HERE''
+
+    ```
+
+
+    Tokens are short-lived. Make sure to request a new one when the current one expires.'
+  version: v1.0.0
+servers:
+- url: https://api.clients.wellhub.com
+tags:
+- name: Employees
+  description: Endpoints for listing employees associated with a company or entity.
+paths:
+  /v1/companies/{company-tax-id}/employees:
+    get:
+      tags:
+      - Employees
+      summary: List employees by company
+      description: 'Returns a paginated list of employees belonging to the specified company, identified by its tax ID. Only companies accessible to the authenticated entity are allowed.
+
+
+        > **ℹ️ Availability.** This endpoint is available to **multi-entity clients** and **channel partners**. Single-entity clients should use `GET /v1/employees` instead.'
+      parameters:
+      - name: company-tax-id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 12.345.678/0001-99
+        description: The tax ID of the company whose employees should be listed.
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Pagination cursor returned from the previous response. Omit to retrieve the first page.
+      responses:
+        '200':
+          description: OK. Returns a paginated list of employees.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeesResponse'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: Unauthorized. Missing or invalid Bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden. The authenticated entity does not have access to this company.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '404':
+          description: Not Found. No company found with the given tax ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - OAuth2: []
+  /v1/employees:
+    get:
+      tags:
+      - Employees
+      summary: List employees for a single entity
+      description: Returns a paginated list of all employees belonging to the authenticated single-entity client. Use the `cursor` parameter to paginate through results.
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Pagination cursor returned from the previous response. Omit to retrieve the first page.
+      responses:
+        '200':
+          description: OK. Returns a paginated list of employees.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeesResponse'
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '401':
+          description: Unauthorized. Missing or invalid Bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden. The authenticated entity does not have access to this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - OAuth2: []
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Internal Wellhub identifier for the employee.
+          example: abc123def456
+        full_name:
+          type: string
+          description: Employee's full name.
+          example: Jane Doe
+        email:
+          type: string
+          description: Employee's email address.
+          example: jane.doe@example.com
+        employee_id:
+          type: string
+          description: Client-defined employee identifier.
+          example: EMP001
+        national_id:
+          type: string
+          description: Employee's national identifier (e.g. CPF in Brazil).
+          example: 123.456.789-00
+        invitation_status:
+          type: string
+          description: Current invitation status for the employee on the Wellhub platform.
+          example: accepted
+        mobile_number:
+          type: string
+          description: Employee's mobile phone number.
+          example: '+5511999999999'
+        cost_center:
+          type: string
+          description: Cost center associated with the employee.
+          example: CC-001
+        department:
+          type: string
+          description: Department the employee belongs to.
+          example: Engineering
+        office_zip_code:
+          type: string
+          description: ZIP code of the employee's office location.
+          example: 01310-100
+        payroll_id:
+          type: string
+          description: Payroll identifier for the employee.
+          example: PAY-9876
+        discount_subset_id:
+          type: string
+          nullable: true
+          description: Identifier for the discount subset applicable to this employee, if any.
+        eligible_to_payroll:
+          type: boolean
+          description: Whether the employee is eligible for payroll deduction.
+          example: true
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the employee record was soft-deleted. `null` if active.
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp of the last update to this employee record.
+    EmployeesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+          description: List of employees for the current page.
+        cursor:
+          type: string
+          nullable: true
+          description: Cursor for fetching the next page of results. `null` if there are no more results.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
+  securitySchemes:
+    OAuth2:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from `POST /oauth/token` using the client_credentials grant type.

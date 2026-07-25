@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Integrations Companies OAuth API
+  description: 'Integrations exposes a public API for Wellhub clients.
+
+
+    ### API Credentials Tutorial
+
+
+    To interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:
+
+
+    1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.
+
+    2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.
+
+    3. **Use the token**: Include it in every subsequent request as follows:
+
+
+    ```
+
+    ''Authorization'': ''Bearer YOUR_ACCESS_TOKEN_HERE''
+
+    ```
+
+
+    Tokens are short-lived. Make sure to request a new one when the current one expires.'
+  version: v1.0.0
+servers:
+- url: https://api.clients.wellhub.com
+tags:
+- name: OAuth
+  description: Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow.
+paths:
+  /oauth/token:
+    post:
+      tags:
+      - OAuth
+      summary: Create an access token
+      description: 'Exchanges client credentials for a Bearer access token using the `client_credentials` grant type. The returned token must be included in the `Authorization` header for all protected endpoints.
+
+
+        > **⚠️ Content-Type required.** This request **must** be sent with `Content-Type: application/x-www-form-urlencoded`. If your HTTP client sets a session-level default of `application/json` (a common pattern), you must override it explicitly for this request — otherwise the server will return `400: invalid grant type` without further explanation.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - client_id
+              - client_secret
+              - grant_type
+              properties:
+                client_id:
+                  type: string
+                  format: uuid
+                  description: The unique UUID identifier for the client application.
+                client_secret:
+                  type: string
+                  description: The secret associated with the client application.
+                grant_type:
+                  type: string
+                  enum:
+                  - client_credentials
+                  description: Must be `client_credentials`.
+            example:
+              client_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+              client_secret: your-client-secret
+              grant_type: client_credentials
+      responses:
+        '200':
+          description: Token successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+              example:
+                access_token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+                token_type: Bearer
+                expires_in: 300
+        '400':
+          description: 'Bad Request. Possible causes:
+
+            1. Missing or invalid `grant_type` (must be `client_credentials`).
+
+            2. Malformed form data.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+              example:
+                error: invalid grant type
+                trace_id: abc123
+        '401':
+          description: Unauthorized. Invalid `client_id` or `client_secret`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+              example:
+                error: invalid client credentials
+                trace_id: abc123
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+components:
+  schemas:
+    TokenResponse:
+      type: object
+      required:
+      - access_token
+      - token_type
+      - expires_in
+      properties:
+        access_token:
+          type: string
+          description: The JWT Bearer token to include in the Authorization header of protected requests.
+        token_type:
+          type: string
+          enum:
+          - Bearer
+          description: Token type. Always `Bearer`.
+        expires_in:
+          type: integer
+          description: Token lifetime in seconds.
+          example: 300
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
+  securitySchemes:
+    OAuth2:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from `POST /oauth/token` using the client_credentials grant type.

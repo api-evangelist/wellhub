@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Integrations Companies API
+  description: 'Integrations exposes a public API for Wellhub clients.
+
+
+    ### API Credentials Tutorial
+
+
+    To interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:
+
+
+    1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.
+
+    2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.
+
+    3. **Use the token**: Include it in every subsequent request as follows:
+
+
+    ```
+
+    ''Authorization'': ''Bearer YOUR_ACCESS_TOKEN_HERE''
+
+    ```
+
+
+    Tokens are short-lived. Make sure to request a new one when the current one expires.'
+  version: v1.0.0
+servers:
+- url: https://api.clients.wellhub.com
+tags:
+- name: Companies
+  description: Endpoints for listing companies associated with the authenticated entity.
+paths:
+  /v1/companies:
+    get:
+      tags:
+      - Companies
+      summary: List entity companies
+      description: 'Returns a paginated list of companies associated with the authenticated entity. Use the `cursor` parameter to paginate through results.
+
+
+        > **⚠️ Multi-entity clients only.** This endpoint is restricted to clients with a multi-entity credential. Single-entity clients will receive a `400: operation not available` error. If you are a single-entity client, use `GET /v1/employees` instead to retrieve your employees directly.'
+      parameters:
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Pagination cursor returned from the previous response. Omit to retrieve the first page.
+      responses:
+        '200':
+          description: OK. Returns a paginated list of companies.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompaniesResponse'
+              example:
+                data:
+                - company_name: Acme Corp
+                  company_tax_id: 12.345.678/0001-99
+                cursor: dXNlcjoxMDA=
+        '400':
+          description: Bad Request. Returned when a **single-entity client** calls this endpoint — it is restricted to multi-entity clients only. The error body will contain `operation not available`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+              example:
+                error: operation not available
+                trace_id: abc123
+        '401':
+          description: Unauthorized. Missing or invalid Bearer token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '403':
+          description: Forbidden. The authenticated entity does not have access to this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPError'
+      security:
+      - OAuth2: []
+components:
+  schemas:
+    Company:
+      type: object
+      properties:
+        company_name:
+          type: string
+          description: The legal name of the company.
+          example: Acme Corp
+        company_tax_id:
+          type: string
+          description: The tax identifier of the company (e.g. CNPJ in Brazil).
+          example: 12.345.678/0001-99
+    CompaniesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+          description: List of companies for the current page.
+        cursor:
+          type: string
+          nullable: true
+          description: Cursor for fetching the next page of results. `null` if there are no more results.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
+  securitySchemes:
+    OAuth2:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token obtained from `POST /oauth/token` using the client_credentials grant type.
