@@ -1,0 +1,38 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/wellhub-integrations-openapi-original.json
+entities:
+  - name: Company
+    description: A client entity (identified by company_tax_id). Multi-entity clients and channel partners manage several companies.
+    key: company_tax_id
+  - name: Employee
+    description: An eligible (or former) employee record synced from the client's HR system so they can access the Wellhub benefit.
+  - name: Job
+    description: An eligibility job - a batch of eligibility updates that is created, populated with items, submitted, and tracked.
+    key: job_id
+    lifecycle: [created, items-added, submitted, processing, completed]
+  - name: JobItem
+    description: A single eligibility operation within a job (operation + company_tax_id + employee data).
+    required_fields: [operation, company_tax_id]
+  - name: JobError
+    description: A validation/processing error attached to a submitted job.
+relationships:
+  - from: Company
+    to: Employee
+    type: has_many
+    via: company_tax_id
+    evidence: GET /v1/companies/{company-tax-id}/employees
+  - from: Job
+    to: JobItem
+    type: has_many
+    via: job_id
+    evidence: POST/GET /v1/eligibility/jobs/{job-id}/items
+  - from: Job
+    to: JobError
+    type: has_many
+    via: job_id
+    evidence: GET /v1/eligibility/jobs/{job-id}/errors
+  - from: JobItem
+    to: Company
+    type: belongs_to
+    via: company_tax_id

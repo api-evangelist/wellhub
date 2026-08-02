@@ -1,8 +1,15 @@
 aid: wellhub
 name: Wellhub
-description: 'Wellhub is a company surfaced as a portfolio company of atomico, hv-capital, softbank-vision-fund
-  and added to the API Evangelist network as a stub for enrichment. Sector: health. This profile is a
-  lead awaiting the enrichment pipeline.'
+description: >-
+  Wellhub (formerly Gympass) is a corporate wellbeing platform that gives employees access
+  to a network of fitness, mindfulness, therapy, nutrition, and sleep partners through their
+  employer's benefits program. For system integrators it publishes a public Integrations API:
+  an OAuth2 client-credentials REST API that lets a client's HR or payroll system sync employee
+  eligibility to Wellhub in real time, so employees gain access on hire and lose it on
+  termination. The API models eligibility as batch jobs (create a job, add up to 500 items,
+  submit, then poll status and read per-record errors) and is documented on a Stoplight-powered
+  developer hub with a downloadable OpenAPI 3.0 contract and a synthetic-data Sandbox. Wellhub
+  is backed by Atomico, HV Capital, and SoftBank Vision Fund.
 url: https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -12,18 +19,254 @@ x-backed-by:
 - softbank-vision-fund
 x-tier: stub
 x-tier-reason: portfolio-lead
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 18
+  pass: local-v1
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
 - Health
-apis: []
+- Wellbeing
+- Corporate Benefits
+- Fitness
+- HR
+- Eligibility
+- Employee Benefits
+image: https://wellhub.com/favicon.ico
+apis:
+- aid: wellhub:wellhub-companies-api
+  name: Wellhub Companies API
+  description: Endpoints for listing companies associated with the authenticated entity.
+  humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
+  baseURL: https://api.clients.wellhub.com
+  tags:
+  - Companies
+  properties:
+  - type: OpenAPI
+    url: openapi/wellhub-companies-api-openapi.yml
+  - type: Documentation
+    url: https://developer-hub.wellhub.com/docs/integrations/api/
+  - type: APIReference
+    url: https://developer-hub.wellhub.com/docs/integrations/api/eligibility/
+  - type: GettingStarted
+    url: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+  - type: Authentication
+    url: authentication/wellhub-authentication.yml
+  - type: Conventions
+    url: conventions/wellhub-conventions.yml
+  - type: RateLimits
+    url: rate-limits/wellhub-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/wellhub-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/wellhub-lifecycle.yml
+  - type: Sandbox
+    url: sandbox/wellhub-sandbox.yml
+  - type: DataModel
+    url: data-model/wellhub-data-model.yml
+  - type: Conformance
+    url: conformance/wellhub-conformance.yml
+  - type: AgenticAccess
+    url: agentic-access/wellhub-agentic-access.yml
+  - type: LLMsTxt
+    url: llms/wellhub-llms.txt
+- aid: wellhub:wellhub-employees-api
+  name: Wellhub Employees API
+  description: Endpoints for listing employees associated with a company or entity.
+  humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
+  baseURL: https://api.clients.wellhub.com
+  tags:
+  - Employees
+  properties:
+  - type: OpenAPI
+    url: openapi/wellhub-employees-api-openapi.yml
+  - type: Documentation
+    url: https://developer-hub.wellhub.com/docs/integrations/api/
+  - type: APIReference
+    url: https://developer-hub.wellhub.com/docs/integrations/api/eligibility/
+  - type: GettingStarted
+    url: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+  - type: Authentication
+    url: authentication/wellhub-authentication.yml
+  - type: Conventions
+    url: conventions/wellhub-conventions.yml
+  - type: RateLimits
+    url: rate-limits/wellhub-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/wellhub-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/wellhub-lifecycle.yml
+  - type: Sandbox
+    url: sandbox/wellhub-sandbox.yml
+  - type: DataModel
+    url: data-model/wellhub-data-model.yml
+  - type: Conformance
+    url: conformance/wellhub-conformance.yml
+  - type: AgenticAccess
+    url: agentic-access/wellhub-agentic-access.yml
+  - type: LLMsTxt
+    url: llms/wellhub-llms.txt
+- aid: wellhub:wellhub-jobs-api
+  name: Wellhub Jobs API
+  description: >-
+    Endpoints for managing eligibility batch jobs. A job follows a lifecycle: Create → Add Items → Submit
+    → Monitor.
+
+
+    After submission, the job transitions through the following statuses:
+
+    - `PENDING` — job has been submitted and is queued.
+
+    - `VALIDATING` — intermediate state while items are being validated.
+
+    - `SUCCEEDED` — all items processed successfully (terminal).
+
+    - `SUCCEEDED_WITH_ERRORS` — job has been partially processed, with error entries that must be fixed
+    (terminal). → **Call `GET /errors` to review failures.**
+
+    - `REJECTED` — job was rejected due to validation issues (terminal). → **Call `GET /errors` to review
+    failures.**
+
+    - `INTERNAL_SERVER_ERROR` — a server-side error occurred during processing; it is recommended to try
+    again (terminal). → **Retry job submission.**
+  humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
+  baseURL: https://api.clients.wellhub.com
+  tags:
+  - Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/wellhub-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://developer-hub.wellhub.com/docs/integrations/api/
+  - type: APIReference
+    url: https://developer-hub.wellhub.com/docs/integrations/api/eligibility/
+  - type: GettingStarted
+    url: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+  - type: Authentication
+    url: authentication/wellhub-authentication.yml
+  - type: Conventions
+    url: conventions/wellhub-conventions.yml
+  - type: RateLimits
+    url: rate-limits/wellhub-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/wellhub-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/wellhub-lifecycle.yml
+  - type: Sandbox
+    url: sandbox/wellhub-sandbox.yml
+  - type: DataModel
+    url: data-model/wellhub-data-model.yml
+  - type: Conformance
+    url: conformance/wellhub-conformance.yml
+  - type: AgenticAccess
+    url: agentic-access/wellhub-agentic-access.yml
+  - type: LLMsTxt
+    url: llms/wellhub-llms.txt
+- aid: wellhub:wellhub-oauth-api
+  name: Wellhub OAuth API
+  description: Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow.
+  humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
+  baseURL: https://api.clients.wellhub.com
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/wellhub-oauth-api-openapi.yml
+  - type: Documentation
+    url: https://developer-hub.wellhub.com/docs/integrations/api/
+  - type: APIReference
+    url: https://developer-hub.wellhub.com/docs/integrations/api/eligibility/
+  - type: GettingStarted
+    url: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+  - type: Authentication
+    url: authentication/wellhub-authentication.yml
+  - type: Conventions
+    url: conventions/wellhub-conventions.yml
+  - type: RateLimits
+    url: rate-limits/wellhub-rate-limits.yml
+  - type: ErrorCatalog
+    url: errors/wellhub-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/wellhub-lifecycle.yml
+  - type: Sandbox
+    url: sandbox/wellhub-sandbox.yml
+  - type: DataModel
+    url: data-model/wellhub-data-model.yml
+  - type: Conformance
+    url: conformance/wellhub-conformance.yml
+  - type: AgenticAccess
+    url: agentic-access/wellhub-agentic-access.yml
+  - type: LLMsTxt
+    url: llms/wellhub-llms.txt
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DeveloperPortal
+  url: https://developers.wellhub.com/
+- type: Documentation
+  url: https://developer-hub.wellhub.com/docs/integrations/api/
+- type: APIReference
+  url: https://developer-hub.wellhub.com/docs/integrations/api/eligibility/
+- type: GettingStarted
+  url: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+- type: Authentication
+  url: authentication/wellhub-authentication.yml
+- type: Conventions
+  url: conventions/wellhub-conventions.yml
+- type: RateLimits
+  url: rate-limits/wellhub-rate-limits.yml
+- type: ErrorCatalog
+  url: errors/wellhub-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/wellhub-lifecycle.yml
+- type: Sandbox
+  url: sandbox/wellhub-sandbox.yml
+- type: DataModel
+  url: data-model/wellhub-data-model.yml
+- type: Conformance
+  url: conformance/wellhub-conformance.yml
+- type: Compliance
+  url: https://security.wellhub.com/
+- type: MCPServer
+  url: mcp/wellhub-mcp.yml
+- type: AgentSkill
+  url: skills/wellhub-sync-eligibility.md
+- type: AgenticAccess
+  url: agentic-access/wellhub-agentic-access.yml
+- type: LLMsTxt
+  url: llms/wellhub-llms.txt
+- type: TrustCenter
+  url: security/wellhub-trust-center.yml
+- type: DomainSecurity
+  url: security/wellhub-domain-security.yml
+- type: SignUp
+  url: https://clients.wellhub.com/
+- type: TermsOfService
+  url: https://wellhub.com/en-us/terms/
+- type: PrivacyPolicy
+  url: https://wellhub.com/en-us/privacy/
+- type: Blog
+  url: https://www.gympass.com/us/blog
+- type: Support
+  url: https://www.gympass.com/us/faq
 - type: Website
   url: https://wellhub.com

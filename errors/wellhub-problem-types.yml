@@ -1,0 +1,58 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/wellhub-integrations-openapi-original.json
+format: json
+envelope:
+  fields: [error, trace_id]
+  multiple_errors_shape: '{ errors: [ { field, message } ] }'
+  rfc9457: false
+  note: Wellhub returns a JSON error object with a human-readable `error` string and a `trace_id`; validation failures return a `MultipleErrorResponse` listing per-field errors.
+problems:
+  - status: 400
+    title: Bad Request
+    description: Missing/invalid grant_type or malformed form data (token); single-entity client calling a multi-entity endpoint (`operation not available`); invalid job-id format; empty body or more than 500 items; item validation failures (missing operation or company_tax_id, invalid operation value).
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#POST /oauth/token
+      - openapi/wellhub-integrations-openapi-original.json#GET /v1/companies
+      - openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/items
+  - status: 401
+    title: Unauthorized
+    description: Invalid client_id or client_secret at the token endpoint, or a missing/invalid Bearer token on a protected endpoint.
+    remediation: 'Re-request an access token via POST /oauth/token and send it as Authorization: Bearer <token>.'
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#POST /oauth/token
+      - openapi/wellhub-integrations-openapi-original.json#GET /v1/employees
+  - status: 403
+    title: Forbidden
+    description: The authenticated entity does not have access to this resource/company or permission to create jobs.
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#GET /v1/companies
+      - openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs
+  - status: 404
+    title: Not Found
+    description: No company found with the given tax ID, or no job found with the given ID.
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#GET /v1/companies/{company-tax-id}/employees
+      - openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/status
+  - status: 409
+    title: Conflict
+    description: The job has already been submitted.
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/submit
+  - status: 413
+    title: Request Entity Too Large
+    description: The request payload exceeds the allowed size limit when adding job items.
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/items
+  - status: 422
+    title: Unprocessable Entity
+    description: The job cannot be submitted in its current state.
+    source_operations:
+      - openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/submit
+  - status: 429
+    title: Too Many Requests
+    description: A rate or burst limit was exceeded. Responses carry RateLimit-Limit / RateLimit-Remaining / RateLimit-Reset headers; back off accordingly.
+    source: rate-limits/wellhub-rate-limits.yml
+  - status: 500
+    title: Internal Server Error
+    description: Unexpected server-side error; retry with backoff and reference the returned trace_id when contacting support.

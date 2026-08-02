@@ -1,0 +1,1431 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Integrations API",
+    "description": "Integrations exposes a public API for Wellhub clients.\n\n### API Credentials Tutorial\n\nTo interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:\n\n1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.\n2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.\n3. **Use the token**: Include it in every subsequent request as follows:\n\n```\n'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE'\n```\n\nTokens are short-lived. Make sure to request a new one when the current one expires.",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.clients.wellhub.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "OAuth",
+      "description": "Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow."
+    },
+    {
+      "name": "Companies",
+      "description": "Endpoints for listing companies associated with the authenticated entity."
+    },
+    {
+      "name": "Employees",
+      "description": "Endpoints for listing employees associated with a company or entity."
+    },
+    {
+      "name": "Jobs",
+      "description": "Endpoints for managing eligibility batch jobs. A job follows a lifecycle: Create → Add Items → Submit → Monitor.\n\nAfter submission, the job transitions through the following statuses:\n- `PENDING` — job has been submitted and is queued.\n- `VALIDATING` — intermediate state while items are being validated.\n- `SUCCEEDED` — all items processed successfully (terminal).\n- `SUCCEEDED_WITH_ERRORS` — job has been partially processed, with error entries that must be fixed (terminal). → **Call `GET /errors` to review failures.**\n- `REJECTED` — job was rejected due to validation issues (terminal). → **Call `GET /errors` to review failures.**\n- `INTERNAL_SERVER_ERROR` — a server-side error occurred during processing; it is recommended to try again (terminal). → **Retry job submission.**"
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "tags": ["OAuth"],
+        "summary": "Create an access token",
+        "description": "Exchanges client credentials for a Bearer access token using the `client_credentials` grant type. The returned token must be included in the `Authorization` header for all protected endpoints.\n\n> **⚠️ Content-Type required.** This request **must** be sent with `Content-Type: application/x-www-form-urlencoded`. If your HTTP client sets a session-level default of `application/json` (a common pattern), you must override it explicitly for this request — otherwise the server will return `400: invalid grant type` without further explanation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": ["client_id", "client_secret", "grant_type"],
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The unique UUID identifier for the client application."
+                  },
+                  "client_secret": {
+                    "type": "string",
+                    "description": "The secret associated with the client application."
+                  },
+                  "grant_type": {
+                    "type": "string",
+                    "enum": ["client_credentials"],
+                    "description": "Must be `client_credentials`."
+                  }
+                }
+              },
+              "example": {
+                "client_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                "client_secret": "your-client-secret",
+                "grant_type": "client_credentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                },
+                "example": {
+                  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "token_type": "Bearer",
+                  "expires_in": 300
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Possible causes:\n1. Missing or invalid `grant_type` (must be `client_credentials`).\n2. Malformed form data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                },
+                "example": {
+                  "error": "invalid grant type",
+                  "trace_id": "abc123"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid `client_id` or `client_secret`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                },
+                "example": {
+                  "error": "invalid client credentials",
+                  "trace_id": "abc123"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/companies": {
+      "get": {
+        "tags": ["Companies"],
+        "summary": "List entity companies",
+        "description": "Returns a paginated list of companies associated with the authenticated entity. Use the `cursor` parameter to paginate through results.\n\n> **⚠️ Multi-entity clients only.** This endpoint is restricted to clients with a multi-entity credential. Single-entity clients will receive a `400: operation not available` error. If you are a single-entity client, use `GET /v1/employees` instead to retrieve your employees directly.",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns a paginated list of companies.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompaniesResponse"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "company_name": "Acme Corp",
+                      "company_tax_id": "12.345.678/0001-99"
+                    }
+                  ],
+                  "cursor": "dXNlcjoxMDA="
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Returned when a **single-entity client** calls this endpoint — it is restricted to multi-entity clients only. The error body will contain `operation not available`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                },
+                "example": {
+                  "error": "operation not available",
+                  "trace_id": "abc123"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The authenticated entity does not have access to this resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/companies/{company-tax-id}/employees": {
+      "get": {
+        "tags": ["Employees"],
+        "summary": "List employees by company",
+        "description": "Returns a paginated list of employees belonging to the specified company, identified by its tax ID. Only companies accessible to the authenticated entity are allowed.\n\n> **ℹ️ Availability.** This endpoint is available to **multi-entity clients** and **channel partners**. Single-entity clients should use `GET /v1/employees` instead.",
+        "parameters": [
+          {
+            "name": "company-tax-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "12.345.678/0001-99",
+            "description": "The tax ID of the company whose employees should be listed."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns a paginated list of employees.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The authenticated entity does not have access to this company.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. No company found with the given tax ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/employees": {
+      "get": {
+        "tags": ["Employees"],
+        "summary": "List employees for a single entity",
+        "description": "Returns a paginated list of all employees belonging to the authenticated single-entity client. Use the `cursor` parameter to paginate through results.",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns a paginated list of employees.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The authenticated entity does not have access to this resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/eligibility/jobs": {
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Create a new eligibility job",
+        "description": "Creates a new eligibility batch job in draft state. After creation, add items to the job using `POST /v1/eligibility/jobs/{job-id}/items`, then submit it using `POST /v1/eligibility/jobs/{job-id}/submit`.",
+        "responses": {
+          "201": {
+            "description": "Created. Returns the newly created job's ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResponse"
+                },
+                "example": {
+                  "id": "d46fb00b-79b1-4a89-9bd6-523889d0417f"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The authenticated entity does not have permission to create jobs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/eligibility/jobs/{job-id}/items": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "List job items",
+        "description": "Returns a paginated list of all items that have been added to the specified job.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+            "description": "The UUID of the job."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns a paginated list of job items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobItemsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Invalid `job-id` format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. No job found with the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Add items to a job",
+        "description": "Adds a batch of employee records to an existing draft job. Each item represents a single employee operation (CREATE, UPDATE, or DELETE). A request must contain between 1 and 500 items. The `company_tax_id` and `operation` fields are required per item.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+            "description": "The UUID of the draft job to add items to."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 500,
+                "items": {
+                  "$ref": "#/components/schemas/CreateJobItem"
+                }
+              },
+              "example": [
+                {
+                  "operation": "CREATE",
+                  "company_tax_id": "12.345.678/0001-99",
+                  "email": "jane.doe@example.com",
+                  "full_name": "Jane Doe",
+                  "employee_id": "EMP001",
+                  "national_id": "123.456.789-00",
+                  "department": "Engineering",
+                  "cost_center": "CC-001",
+                  "office_zip_code": "01310-100",
+                  "eligible_to_payroll": true
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content. All items were successfully added to the job."
+          },
+          "400": {
+            "description": "Bad Request. Possible causes:\n1. Invalid `job-id` format.\n2. Request body is empty or contains more than 500 items.\n3. One or more items failed validation (missing `operation` or `company_tax_id`, invalid `operation` value).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultipleErrorResponse"
+                },
+                "example": {
+                  "message": "validation error",
+                  "reason": "invalid request body",
+                  "errors": [
+                    {
+                      "field": "[0].operation",
+                      "message": "must be one of CREATE, UPDATE, DELETE"
+                    },
+                    {
+                      "field": "[1].company_tax_id",
+                      "message": "cannot be blank"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. No job found with the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request Entity Too Large. The request payload exceeds the allowed size limit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/eligibility/jobs/{job-id}/submit": {
+      "post": {
+        "tags": ["Jobs"],
+        "summary": "Submit a job for processing",
+        "description": "Submits a draft job for asynchronous processing. The job must have at least one item added before it can be submitted. Once submitted, the job transitions out of draft state and cannot be modified. Use `GET /v1/eligibility/jobs/{job-id}/status` to monitor progress.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+            "description": "The UUID of the job to submit."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted. The job has been submitted and is queued for processing. **Response body is empty — do not attempt to parse it.**"
+          },
+          "400": {
+            "description": "Bad Request. Invalid `job-id` format or job has no items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. No job found with the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict. The job has already been submitted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity. The job cannot be submitted in its current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/eligibility/jobs/{job-id}/status": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Get job status",
+        "description": "Returns the current status of a submitted job, including processing statistics (number of newcomers, leavers, and updaters processed).",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+            "description": "The UUID of the job."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns the job status and statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusResponse"
+                },
+                "example": {
+                  "id": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                  "status": "SUCCEEDED",
+                  "updated_at": "2025-04-01T19:30:54Z",
+                  "statistics": {
+                    "newcomers": 10,
+                    "leavers": 2,
+                    "updaters": 5
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Invalid `job-id` format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. No job found with the given ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    },
+    "/v1/eligibility/jobs/{job-id}/errors": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "List job errors",
+        "description": "Returns a paginated list of processing errors for the specified job. Use this after a job has been submitted to identify records that failed processing.\n\n> **ℹ️ When to call this.** Errors are populated for jobs in `SUCCEEDED_WITH_ERRORS` or `REJECTED` terminal status. Calling this endpoint for jobs in other statuses will return an empty list.",
+        "parameters": [
+          {
+            "name": "job-id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+            "description": "The UUID of the job."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK. Returns a paginated list of job errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobErrorsResponse"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "change_number": 1,
+                      "company_tax_id": "12.345.678/0001-99",
+                      "error_type": "INVALID_FIELD",
+                      "field_name": "email",
+                      "field_value": "not-an-email",
+                      "recovered_by": null
+                    }
+                  ],
+                  "cursor": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Invalid `job-id` format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Missing or invalid Bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token obtained from `POST /oauth/token` using the client_credentials grant type."
+      }
+    },
+    "schemas": {
+      "HTTPError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Human-readable error message."
+          },
+          "trace_id": {
+            "type": "string",
+            "description": "Unique trace identifier for debugging and support."
+          }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "required": ["access_token", "token_type", "expires_in"],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "The JWT Bearer token to include in the Authorization header of protected requests."
+          },
+          "token_type": {
+            "type": "string",
+            "enum": ["Bearer"],
+            "description": "Token type. Always `Bearer`."
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Token lifetime in seconds.",
+            "example": 300
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "company_name": {
+            "type": "string",
+            "description": "The legal name of the company.",
+            "example": "Acme Corp"
+          },
+          "company_tax_id": {
+            "type": "string",
+            "description": "The tax identifier of the company (e.g. CNPJ in Brazil).",
+            "example": "12.345.678/0001-99"
+          }
+        }
+      },
+      "CompaniesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Company"
+            },
+            "description": "List of companies for the current page."
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Cursor for fetching the next page of results. `null` if there are no more results."
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Internal Wellhub identifier for the employee.",
+            "example": "abc123def456"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Employee's full name.",
+            "example": "Jane Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Employee's email address.",
+            "example": "jane.doe@example.com"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "Client-defined employee identifier.",
+            "example": "EMP001"
+          },
+          "national_id": {
+            "type": "string",
+            "description": "Employee's national identifier (e.g. CPF in Brazil).",
+            "example": "123.456.789-00"
+          },
+          "invitation_status": {
+            "type": "string",
+            "description": "Current invitation status for the employee on the Wellhub platform.",
+            "example": "accepted"
+          },
+          "mobile_number": {
+            "type": "string",
+            "description": "Employee's mobile phone number.",
+            "example": "+5511999999999"
+          },
+          "cost_center": {
+            "type": "string",
+            "description": "Cost center associated with the employee.",
+            "example": "CC-001"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department the employee belongs to.",
+            "example": "Engineering"
+          },
+          "office_zip_code": {
+            "type": "string",
+            "description": "ZIP code of the employee's office location.",
+            "example": "01310-100"
+          },
+          "payroll_id": {
+            "type": "string",
+            "description": "Payroll identifier for the employee.",
+            "example": "PAY-9876"
+          },
+          "discount_subset_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifier for the discount subset applicable to this employee, if any."
+          },
+          "eligible_to_payroll": {
+            "type": "boolean",
+            "description": "Whether the employee is eligible for payroll deduction.",
+            "example": true
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Timestamp when the employee record was soft-deleted. `null` if active."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last update to this employee record."
+          }
+        }
+      },
+      "EmployeesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Employee"
+            },
+            "description": "List of employees for the current page."
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Cursor for fetching the next page of results. `null` if there are no more results."
+          }
+        }
+      },
+      "JobResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The UUID of the newly created job.",
+            "example": "d46fb00b-79b1-4a89-9bd6-523889d0417f"
+          }
+        }
+      },
+      "CreateJobItem": {
+        "type": "object",
+        "required": ["operation", "company_tax_id"],
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": ["CREATE", "UPDATE", "DELETE"],
+            "description": "The operation to perform for this employee record."
+          },
+          "company_tax_id": {
+            "type": "string",
+            "description": "The tax ID of the company this employee belongs to.",
+            "example": "12.345.678/0001-99"
+          },
+          "email": {
+            "type": "string",
+            "description": "Employee's email address.",
+            "example": "jane.doe@example.com"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Employee's full name.",
+            "example": "Jane Doe"
+          },
+          "employee_id": {
+            "type": "string",
+            "description": "Client-defined employee identifier.",
+            "example": "EMP001"
+          },
+          "national_id": {
+            "type": "string",
+            "description": "Employee's national identifier.",
+            "example": "123.456.789-00"
+          },
+          "payroll_id": {
+            "type": "string",
+            "description": "Payroll identifier for the employee.",
+            "example": "PAY-9876"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department the employee belongs to.",
+            "example": "Engineering"
+          },
+          "office_zip_code": {
+            "type": "string",
+            "description": "ZIP code of the employee's office location.",
+            "example": "01310-100"
+          },
+          "cost_center": {
+            "type": "string",
+            "description": "Cost center associated with the employee.",
+            "example": "CC-001"
+          },
+          "mobile_number": {
+            "type": "string",
+            "description": "Employee's mobile phone number.",
+            "example": "+5511999999999"
+          },
+          "discount_subset_id": {
+            "type": "string",
+            "description": "Identifier for the discount subset applicable to this employee.",
+            "example": "SUBSET-A"
+          },
+          "eligible_to_payroll": {
+            "type": "boolean",
+            "description": "Whether the employee is eligible for payroll deduction.",
+            "example": true
+          },
+          "custom_fields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional map of additional custom attributes for the employee. Values are not validated by the platform."
+          }
+        }
+      },
+      "JobItemResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Internal identifier for this job item."
+          },
+          "job_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The UUID of the parent job."
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["CREATE", "UPDATE", "DELETE"],
+            "description": "The operation applied for this item."
+          },
+          "company_tax_id": {
+            "type": "string",
+            "description": "Tax ID of the associated company."
+          },
+          "email": { "type": "string", "nullable": true },
+          "full_name": { "type": "string", "nullable": true },
+          "employee_id": { "type": "string", "nullable": true },
+          "national_id": { "type": "string", "nullable": true },
+          "payroll_id": { "type": "string", "nullable": true },
+          "department": { "type": "string", "nullable": true },
+          "office_zip_code": { "type": "string", "nullable": true },
+          "cost_center": { "type": "string", "nullable": true },
+          "mobile_number": { "type": "string", "nullable": true },
+          "discount_subset_id": { "type": "string", "nullable": true },
+          "eligible_to_payroll": { "type": "boolean", "nullable": true },
+          "custom_fields": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "change_number": {
+            "type": "integer",
+            "description": "Sequential number assigned to this item within the job."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when this item was added to the job."
+          }
+        }
+      },
+      "JobItemsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobItemResponse"
+            }
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Cursor for the next page. `null` if no more results."
+          }
+        }
+      },
+      "Statistics": {
+        "type": "object",
+        "properties": {
+          "newcomers": {
+            "type": "integer",
+            "description": "Number of employees successfully created.",
+            "example": 10
+          },
+          "leavers": {
+            "type": "integer",
+            "description": "Number of employees successfully deleted.",
+            "example": 2
+          },
+          "updaters": {
+            "type": "integer",
+            "description": "Number of employees successfully updated.",
+            "example": 5
+          }
+        }
+      },
+      "JobStatusResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The UUID of the job."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "VALIDATING",
+              "SUCCEEDED",
+              "SUCCEEDED_WITH_ERRORS",
+              "REJECTED",
+              "INTERNAL_SERVER_ERROR"
+            ],
+            "description": "Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.",
+            "example": "SUCCEEDED"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the last status update."
+          },
+          "statistics": {
+            "$ref": "#/components/schemas/Statistics"
+          }
+        }
+      },
+      "JobError": {
+        "type": "object",
+        "properties": {
+          "change_number": {
+            "type": "integer",
+            "nullable": true,
+            "description": "The sequence number of the job item that caused the error."
+          },
+          "company_tax_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tax ID of the company associated with the failed item. Useful for tracing which company an error belongs to when a job spans multiple companies.",
+            "example": "12.345.678/0001-99"
+          },
+          "error_type": {
+            "type": "string",
+            "description": "Type/code of the error that occurred."
+          },
+          "field_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the field that caused the error, if applicable."
+          },
+          "field_value": {
+            "type": "string",
+            "nullable": true,
+            "description": "Value of the field that caused the error, if applicable."
+          },
+          "recovered_by": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifier of the process or user that recovered this error, if applicable."
+          }
+        }
+      },
+      "JobErrorsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobError"
+            }
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Cursor for the next page. `null` if no more results."
+          }
+        }
+      },
+      "FieldError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "JSON path of the field that failed validation.",
+            "example": "[0].operation"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable description of the validation failure.",
+            "example": "must be one of CREATE, UPDATE, DELETE"
+          }
+        }
+      },
+      "MultipleErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "High-level error summary.",
+            "example": "validation error"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Machine-readable error reason code.",
+            "example": "invalid request body"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            },
+            "description": "List of individual field-level validation errors."
+          }
+        }
+      }
+    }
+  }
+}

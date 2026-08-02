@@ -1,0 +1,22 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer-hub.wellhub.com/docs/integrations/api/
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+deprecation:
+  policy_url: https://developer-hub.wellhub.com/docs/integrations/api/migration-faqs/
+  note: A Migration FAQ documents moving to the current REST API; no formal RFC 8594 Sunset/Deprecation header contract is published.
+  sunset_header: false
+sla:
+  url: null
+  uptime_target: null
+status_page: null
+status_page_note: No public status page found (status.wellhub.com does not resolve; wellhub.statuspage.io redirects to the statuspage.io marketing site).
+environments:
+  sandbox: https://pilot-api.clients.wellhub.com
+  production: https://api.clients.wellhub.com
+deprecated_operations: []
+roadmap:
+  note: Docs list "Coming soon" flows (Payroll Deductions, Flexible Benefits, Reports, Sign-up) for the REST API, indicating a forward roadmap, but no dated roadmap page is published.

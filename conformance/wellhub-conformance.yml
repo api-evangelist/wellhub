@@ -1,0 +1,31 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/wellhub-integrations-openapi-original.json
+standards:
+  - id: oauth2-client-credentials
+    conforms: true
+    evidence: OAuth 2.0 client_credentials grant at POST /oauth/token; Bearer JWT on protected endpoints.
+  - id: rest
+    conforms: true
+    evidence: Resource-oriented paths, standard HTTP methods and status codes, JSON bodies.
+  - id: cursor-pagination
+    conforms: true
+    evidence: Opaque `cursor` query param with null-terminated pages (conventions/wellhub-conventions.yml).
+  - id: rfc6585-429
+    conforms: true
+    evidence: Returns 429 Too Many Requests with RateLimit-Limit/Remaining/Reset headers.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors use a bespoke JSON envelope ({error, trace_id}), not application/problem+json.
+  - id: oidc
+    conforms: false
+  - id: scim
+    conforms: false
+  - id: fhir-r4
+    conforms: false
+compliance_program:
+  source: https://security.wellhub.com/
+  certifications:
+    - ISO 27001
+    - PCI DSS
+    - GDPR

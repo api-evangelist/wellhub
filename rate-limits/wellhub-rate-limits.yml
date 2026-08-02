@@ -1,0 +1,64 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+api: openapi/wellhub-integrations-openapi-original.json
+scope: per client
+over_limit_status: 429
+response_headers:
+  - RateLimit-Limit
+  - RateLimit-Remaining
+  - RateLimit-Reset
+dimensions:
+  rate_limit: maximum requests per minute (RPM)
+  burst_limit: maximum requests per second allowed in a short spike
+rate_limits:
+  - endpoint: /oauth/token
+    method: POST
+    limit_count: 5
+    limit_window: minute
+    burst_rps: 5
+  - endpoint: /v1/eligibility/jobs
+    method: POST
+    limit_count: 25
+    limit_window: minute
+    burst_rps: 5
+  - endpoint: /v1/eligibility/jobs/{job-id}/submit
+    method: POST
+    limit_count: 25
+    limit_window: minute
+    burst_rps: 5
+  - endpoint: /v1/eligibility/jobs/{job-id}/items
+    method: POST
+    limit_count: 50
+    limit_window: minute
+    burst_rps: 20
+  - endpoint: /v1/eligibility/jobs/{job-id}/items
+    method: GET
+    limit_count: 50
+    limit_window: minute
+    burst_rps: 20
+  - endpoint: /v1/eligibility/jobs/{job-id}/status
+    method: GET
+    limit_count: 50
+    limit_window: minute
+    burst_rps: 20
+  - endpoint: /v1/eligibility/jobs/{job-id}/errors
+    method: GET
+    limit_count: 50
+    limit_window: minute
+    burst_rps: 20
+  - endpoint: /v1/employees
+    method: GET
+    limit_count: 300
+    limit_window: minute
+    burst_rps: 5
+  - endpoint: /v1/companies/{company-tax-id}/employees
+    method: GET
+    limit_count: 300
+    limit_window: minute
+    burst_rps: 5
+  - endpoint: /v1/companies
+    method: GET
+    limit_count: 300
+    limit_window: minute
+    burst_rps: 5

@@ -1,0 +1,20 @@
+{
+  "provider": "wellhub",
+  "sources": [
+    "wellhub-companies-api-openapi.yml",
+    "wellhub-employees-api-openapi.yml",
+    "wellhub-jobs-api-openapi.yml",
+    "wellhub-oauth-api-openapi.yml"
+  ],
+  "outputs": [
+    "wellhub-companies-api-openapi.yml",
+    "wellhub-employees-api-openapi.yml",
+    "wellhub-jobs-api-openapi.yml",
+    "wellhub-oauth-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

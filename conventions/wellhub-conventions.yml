@@ -1,0 +1,49 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+api: openapi/wellhub-integrations-openapi-original.json
+authentication:
+  style: oauth2-client-credentials
+  token_endpoint: https://api.clients.wellhub.com/oauth/token
+  token_request_content_type: application/x-www-form-urlencoded
+  presented_as: Authorization Bearer JWT
+  credential_management: Wellhub for Companies portal (clients.wellhub.com) -> Settings -> API OAuth credentials
+  permission_model: Access level chosen per product area at credential-creation time (not OAuth scopes)
+  notes: Client Secret shown once at creation; store securely. Credential expiration configurable (duration or never-expire).
+idempotency:
+  supported: false
+  notes: No idempotency-key header is documented. The batch model is naturally re-entrant instead - a job that has already been submitted returns 409 Conflict, and items are validated per submission.
+pagination:
+  style: cursor
+  request_param: cursor
+  request_in: query
+  response_field: cursor
+  opaque: true
+  end_condition: response cursor is null
+  notes: Treat cursor values as opaque tokens; do not construct or modify them.
+error_envelope:
+  format: json
+  fields:
+    - error   # human-readable message
+    - trace_id  # unique trace identifier for support/debugging
+  multiple_errors_shape: '{ errors: [ { field, message } ] }'  # MultipleErrorResponse / FieldError, used for validation failures
+  rfc9457: false
+  cross_reference: errors/wellhub-problem-types.yml
+rate_limit_signaling:
+  enforced: true
+  dimensions:
+    - rate_limit_rpm   # maximum requests per minute
+    - burst_rps        # maximum requests per second in a short spike
+  scope: per client
+  over_limit_status: 429
+  response_headers:
+    - RateLimit-Limit
+    - RateLimit-Remaining
+    - RateLimit-Reset
+  cross_reference: rate-limits/wellhub-rate-limits.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  base_path: /v1
+request_response_media_type: application/json
+architecture: REST over HTTPS, JSON request/response bodies, standard HTTP status codes

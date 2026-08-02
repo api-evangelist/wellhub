@@ -1,0 +1,31 @@
+# Wellhub
+
+> Wellhub (formerly Gympass) is a corporate wellbeing platform that gives employees access to fitness, mindfulness, therapy, nutrition, and sleep partners through their employer. Its public developer surface is the Integrations API, which lets client HR/payroll systems sync employee eligibility to Wellhub in real time.
+
+## APIs
+- [Integrations (Eligibility Management) API](https://developer-hub.wellhub.com/docs/integrations/api/): OAuth2 client-credentials REST API to create, submit, and track batch eligibility jobs. Production https://api.clients.wellhub.com, Sandbox https://pilot-api.clients.wellhub.com
+
+## Specs
+- [OpenAPI 3.0.3 spec](https://developer-hub.wellhub.com/openapi/eligibility-spec.json): 10 operations across OAuth, Companies, Employees, and Jobs
+
+## Docs
+- [Developer Hub](https://developer-hub.wellhub.com/docs/integrations/api/)
+- [Getting Started with the REST API](https://developer-hub.wellhub.com/docs/integrations/api/getting-started/)
+- [Eligibility via REST API](https://developer-hub.wellhub.com/docs/integrations/api/eligibility/)
+- [OpenAPI Specification page](https://developer-hub.wellhub.com/docs/integrations/api/openapi/)
+- [Developers portal](https://developers.wellhub.com/)
+- [Trust / Security center](https://security.wellhub.com/)
+
+## Conventions
+- Auth: OAuth 2.0 client credentials; POST /oauth/token (form-encoded) returns a Bearer JWT
+- Pagination: opaque `cursor` query param; last page when `cursor` is null
+- Rate limits: per client, RPM + burst/s per endpoint; 429 with RateLimit-Limit/Remaining/Reset headers
+- Errors: JSON `{ error, trace_id }`; validation failures list `{ field, message }`
+- Compliance: ISO 27001, PCI DSS, GDPR
+
+## Repo artifacts
+- [Authentication](https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/authentication/wellhub-authentication.yml)
+- [Conventions](https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/conventions/wellhub-conventions.yml)
+- [Error catalog](https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/errors/wellhub-problem-types.yml)
+- [Rate limits](https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/rate-limits/wellhub-rate-limits.yml)
+- [Agent skill: sync eligibility](https://raw.githubusercontent.com/api-evangelist/wellhub/refs/heads/main/skills/wellhub-sync-eligibility.md)

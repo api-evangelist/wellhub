@@ -1,0 +1,19 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+sandbox:
+  available: true
+  base_url: https://pilot-api.clients.wellhub.com
+  production_base_url: https://api.clients.wellhub.com
+  model: synthetic-data
+  behavior: >-
+    The API Sandbox returns synthetic data for testing, mimicking the patterns and
+    structure of the production API. Actions taken are only reflected in the synthetic
+    data returned in the response - no users sent to the Sandbox are actually created,
+    updated, or deleted.
+  credentials: >-
+    Create separate Sandbox OAuth credentials in the Wellhub for Companies portal
+    (clients.wellhub.com -> Settings) by choosing the Sandbox environment when
+    generating a credential.
+  test_values:
+    note: Wellhub publishes no fixed magic test identifiers or test cards; the Sandbox returns generated synthetic records. No verbatim test values to capture.

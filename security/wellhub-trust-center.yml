@@ -1,0 +1,18 @@
+generated: '2026-07-21'
+method: searched
+probe: true
+source: https://security.wellhub.com/
+url: https://security.wellhub.com/
+certifications:
+- ISO 27001
+- PCI DSS
+- GDPR
+evidence:
+- source: https://security.wellhub.com/
+  keywords:
+  - iso 27001
+  - iso/iec 27001
+  - pci dss
+  - pci-dss
+  - trust center
+  - gdpr

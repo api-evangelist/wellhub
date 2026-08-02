@@ -1,0 +1,8 @@
+generated: '2026-07-21'
+method: generated
+source: openapi/wellhub-integrations-openapi-original.json
+skills:
+  - file: wellhub-sync-eligibility.md
+    name: Sync employee eligibility to Wellhub
+    api: openapi/wellhub-integrations-openapi-original.json
+    operations: [createAccessToken, createEligibilityJob, addJobItems, submitJob, getJobStatus, listJobErrors]

@@ -1,0 +1,28 @@
+generated: '2026-07-21'
+method: searched
+source: openapi/wellhub-integrations-openapi-original.json
+docs: https://developer-hub.wellhub.com/docs/integrations/api/getting-started/
+summary:
+  types:
+  - oauth2
+  oauth2_flows:
+  - clientCredentials
+  presented_as: Authorization Bearer JWT
+grant:
+  flow: client_credentials
+  token_endpoint: https://api.clients.wellhub.com/oauth/token
+  token_request_content_type: application/x-www-form-urlencoded
+  request_fields: [client_id, client_secret, grant_type]
+  token_format: JWT (Bearer)
+  credential_management: Wellhub for Companies portal (clients.wellhub.com) -> Settings -> API OAuth credentials; permissions chosen per product area at creation; secret shown once; expiration configurable.
+schemes:
+- name: OAuth2
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: >-
+    Bearer token obtained from POST /oauth/token using the client_credentials grant type.
+    Although the OpenAPI declares an http-bearer scheme, the documented mechanism is the
+    OAuth 2.0 client-credentials flow.
+  sources:
+  - openapi/wellhub-integrations-openapi-original.json

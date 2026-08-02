@@ -1,0 +1,38 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Wellhub Integrations API
+  version: 1.0.0
+extends: openapi/wellhub-integrations-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: '2026-07-21'
+      x-apievangelist-notes: >-
+        Wellhub Integrations (Eligibility Management) API. OAuth2 client-credentials,
+        cursor pagination, per-client rate limits (RateLimit-* headers, 429), JSON error
+        envelope ({error, trace_id}). Sandbox at pilot-api.clients.wellhub.com.
+  - target: $.info
+    update:
+      x-agentic-access: agentic-access/wellhub-agentic-access.yml
+  # The published spec omits operationIds; these are the stable ids the pipeline
+  # assigns for MCP tools, agent skills, and cross-artifact references.
+  - target: $.paths['/oauth/token'].post
+    update: { operationId: createAccessToken }
+  - target: $.paths['/v1/companies'].get
+    update: { operationId: listCompanies }
+  - target: $.paths['/v1/companies/{company-tax-id}/employees'].get
+    update: { operationId: listCompanyEmployees }
+  - target: $.paths['/v1/employees'].get
+    update: { operationId: listEmployees }
+  - target: $.paths['/v1/eligibility/jobs'].post
+    update: { operationId: createEligibilityJob }
+  - target: $.paths['/v1/eligibility/jobs/{job-id}/items'].post
+    update: { operationId: addJobItems }
+  - target: $.paths['/v1/eligibility/jobs/{job-id}/items'].get
+    update: { operationId: listJobItems }
+  - target: $.paths['/v1/eligibility/jobs/{job-id}/submit'].post
+    update: { operationId: submitJob }
+  - target: $.paths['/v1/eligibility/jobs/{job-id}/status'].get
+    update: { operationId: getJobStatus }
+  - target: $.paths['/v1/eligibility/jobs/{job-id}/errors'].get
+    update: { operationId: listJobErrors }
