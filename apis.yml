@@ -220,6 +220,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/wellhub-integrations-overlay.yaml
 - type: DeveloperPortal
   url: https://developers.wellhub.com/
 - type: Documentation
