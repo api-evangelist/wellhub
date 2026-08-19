@@ -1,0 +1,2422 @@
+{
+  "item": [
+    {
+      "id": "2e84c806-3c37-4e86-a9f5-d6b96fd979e1",
+      "name": "Jobs",
+      "description": {
+        "content": "Endpoints for managing eligibility batch jobs. A job follows a lifecycle: Create → Add Items → Submit → Monitor.\n\nAfter submission, the job transitions through the following statuses:\n- `PENDING` — job has been submitted and is queued.\n- `VALIDATING` — intermediate state while items are being validated.\n- `SUCCEEDED` — all items processed successfully (terminal).\n- `SUCCEEDED_WITH_ERRORS` — job has been partially processed, with error entries that must be fixed (terminal). → **Call `GET /errors` to review failures.**\n- `REJECTED` — job was rejected due to validation issues (terminal). → **Call `GET /errors` to review failures.**\n- `INTERNAL_SERVER_ERROR` — a server-side error occurred during processing; it is recommended to try again (terminal). → **Retry job submission.**",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "6044abfc-ef31-411a-80ed-5b8608a6d57a",
+          "name": "Create a new eligibility job",
+          "request": {
+            "name": "Create a new eligibility job",
+            "description": {
+              "content": "Creates a new eligibility batch job in draft state. After creation, add items to the job using `POST /v1/eligibility/jobs/{job-id}/items`, then submit it using `POST /v1/eligibility/jobs/{job-id}/submit`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f5e31073-b42d-4e99-af57-4af782226733",
+              "name": "Created. Returns the newly created job's ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"d46fb00b-79b1-4a89-9bd6-523889d0417f\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3fe83555-e324-4397-b574-0e516ab91e73",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6fdf7ba5-fe00-49ce-a65f-e810fad7027b",
+              "name": "Forbidden. The authenticated entity does not have permission to create jobs.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f3a03c23-1dbb-4143-bfbd-a30380e976cb",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9bb446c7-dee1-46b7-bef4-51a889c9b245",
+          "name": "List job items",
+          "request": {
+            "name": "List job items",
+            "description": {
+              "content": "Returns a paginated list of all items that have been added to the specified job.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs",
+                ":job-id",
+                "items"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job-id",
+                  "description": "(Required) The UUID of the job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d662028f-91cc-4cbf-9729-f31b9c30e3df",
+              "name": "OK. Returns a paginated list of job items.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"adbabc10-2e6d-1811-3c67-8fb29f1cbad9\",\n      \"job_id\": \"1999153b-d57e-b847-f194-c72be20ff33d\",\n      \"operation\": \"UPDATE\",\n      \"company_tax_id\": \"string\",\n      \"email\": \"string\",\n      \"full_name\": \"string\",\n      \"employee_id\": \"string\",\n      \"national_id\": \"string\",\n      \"payroll_id\": \"string\",\n      \"department\": \"string\",\n      \"office_zip_code\": \"string\",\n      \"cost_center\": \"string\",\n      \"mobile_number\": \"string\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"custom_fields\": {\n        \"key_0\": 1650.0432576144808,\n        \"key_1\": 7923.380136406531,\n        \"key_2\": false,\n        \"key_3\": 5273\n      },\n      \"change_number\": 5671,\n      \"created_at\": \"1998-10-10T06:26:27.634Z\"\n    },\n    {\n      \"id\": \"43c679b8-72bd-20c5-0ecd-43e427f07ed0\",\n      \"job_id\": \"ccf1cb52-8108-42c5-4f01-5ec06b8d3c91\",\n      \"operation\": \"UPDATE\",\n      \"company_tax_id\": \"string\",\n      \"email\": \"string\",\n      \"full_name\": \"string\",\n      \"employee_id\": \"string\",\n      \"national_id\": \"string\",\n      \"payroll_id\": \"string\",\n      \"department\": \"string\",\n      \"office_zip_code\": \"string\",\n      \"cost_center\": \"string\",\n      \"mobile_number\": \"string\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"custom_fields\": {\n        \"key_0\": 2402.710169522012\n      },\n      \"change_number\": 7540,\n      \"created_at\": \"1975-05-28T05:38:12.883Z\"\n    }\n  ],\n  \"cursor\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e5ffa7b4-8eb2-407d-a986-7bce85572a5e",
+              "name": "Bad Request. Invalid `job-id` format.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "98972adc-e83b-49e6-a560-916b085efeaf",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2f5c7379-59f7-482f-a46f-d261d5225a90",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9877382f-d3d1-4a48-8f57-e111cc202749",
+              "name": "Not Found. No job found with the given ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "25830098-f383-4254-9119-3f523a4852ee",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9ff0dcb5-d305-4c72-ae59-8ab2799184e1",
+          "name": "Add items to a job",
+          "request": {
+            "name": "Add items to a job",
+            "description": {
+              "content": "Adds a batch of employee records to an existing draft job. Each item represents a single employee operation (CREATE, UPDATE, or DELETE). A request must contain between 1 and 500 items. The `company_tax_id` and `operation` fields are required per item.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs",
+                ":job-id",
+                "items"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job-id",
+                  "description": "(Required) The UUID of the draft job to add items to."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"operation\": \"<string>\",\n    \"company_tax_id\": \"<string>\",\n    \"email\": \"<string>\",\n    \"full_name\": \"<string>\",\n    \"employee_id\": \"<string>\",\n    \"national_id\": \"<string>\",\n    \"payroll_id\": \"<string>\",\n    \"department\": \"<string>\",\n    \"office_zip_code\": \"<string>\",\n    \"cost_center\": \"<string>\",\n    \"mobile_number\": \"<string>\",\n    \"discount_subset_id\": \"<string>\",\n    \"eligible_to_payroll\": \"<boolean>\",\n    \"custom_fields\": {\n      \"key_0\": 8373.68326984307\n    }\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ab3a9d80-c48c-462c-8daf-9d747040786b",
+              "name": "No Content. All items were successfully added to the job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "d83f6f31-02e5-4999-af97-ef469382b9b1",
+              "name": "Bad Request. Possible causes:\n1. Invalid `job-id` format.\n2. Request body is empty or contains more than 500 items.\n3. One or more items failed validation (missing `operation` or `company_tax_id`, invalid `operation` value).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"validation error\",\n  \"reason\": \"invalid request body\",\n  \"errors\": [\n    {\n      \"field\": \"[0].operation\",\n      \"message\": \"must be one of CREATE, UPDATE, DELETE\"\n    },\n    {\n      \"field\": \"[1].company_tax_id\",\n      \"message\": \"cannot be blank\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "13331633-d084-4e22-965e-adcfb8b824a1",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a5f1e98b-ae3f-47e3-8913-3af0945f6837",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2750b769-1e0c-40a0-9975-9943e413d039",
+              "name": "Not Found. No job found with the given ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8e9459c9-7d3a-42f3-8ada-5202a403c03d",
+              "name": "Request Entity Too Large. The request payload exceeds the allowed size limit.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Request Entity Too Large",
+              "code": 413,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9972d5f6-9e7a-4d54-a097-dcb717c6bd00",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "items"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the draft job to add items to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"operation\": \"CREATE\",\n    \"company_tax_id\": \"12.345.678/0001-99\",\n    \"email\": \"jane.doe@example.com\",\n    \"full_name\": \"Jane Doe\",\n    \"employee_id\": \"EMP001\",\n    \"national_id\": \"123.456.789-00\",\n    \"department\": \"Engineering\",\n    \"cost_center\": \"CC-001\",\n    \"office_zip_code\": \"01310-100\",\n    \"eligible_to_payroll\": true\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "58796af7-62b1-4780-997e-61576b9f32bb",
+          "name": "Submit a job for processing",
+          "request": {
+            "name": "Submit a job for processing",
+            "description": {
+              "content": "Submits a draft job for asynchronous processing. The job must have at least one item added before it can be submitted. Once submitted, the job transitions out of draft state and cannot be modified. Use `GET /v1/eligibility/jobs/{job-id}/status` to monitor progress.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs",
+                ":job-id",
+                "submit"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job-id",
+                  "description": "(Required) The UUID of the job to submit."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ec799597-d3f8-4919-b983-7f014bce0a2b",
+              "name": "Accepted. The job has been submitted and is queued for processing. **Response body is empty — do not attempt to parse it.**",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ed6860c2-576c-415b-93c2-c9502eafaa9a",
+              "name": "Bad Request. Invalid `job-id` format or job has no items.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "df433ce9-4e98-4486-8016-1353f46ae00f",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1bd20a43-ee70-4a3b-82a2-5a53ec6d5fd7",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "de3cde9a-e5de-4b09-bc7a-be9567a57bcf",
+              "name": "Not Found. No job found with the given ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ea874790-88e7-416a-b86c-93d4f65dd065",
+              "name": "Conflict. The job has already been submitted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ebcb4cf4-cfb9-4364-9b6c-e005388f6b86",
+              "name": "Unprocessable Entity. The job cannot be submitted in its current state.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b64539b9-4e36-4add-aa16-2eecf1cfabd4",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "submit"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job to submit."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "095d6685-5af7-467d-acc4-b929b8a32ee5",
+          "name": "Get job status",
+          "request": {
+            "name": "Get job status",
+            "description": {
+              "content": "Returns the current status of a submitted job, including processing statistics (number of newcomers, leavers, and updaters processed).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs",
+                ":job-id",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job-id",
+                  "description": "(Required) The UUID of the job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d15c06a9-cb20-4580-8999-7521cfd380b6",
+              "name": "OK. Returns the job status and statistics.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"d46fb00b-79b1-4a89-9bd6-523889d0417f\",\n  \"status\": \"SUCCEEDED\",\n  \"updated_at\": \"2025-04-01T19:30:54Z\",\n  \"statistics\": {\n    \"newcomers\": 10,\n    \"leavers\": 2,\n    \"updaters\": 5\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a17cbae8-73fd-470f-872d-0dabc95ac9dc",
+              "name": "Bad Request. Invalid `job-id` format.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ddeca508-d8b1-4f7d-be99-5c6472cc43b9",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4bd011c5-124b-45fc-a1a0-2fccd2ccc645",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce5458a0-5068-45f5-8394-5bfbb361ebff",
+              "name": "Not Found. No job found with the given ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f8ca82a-e8f9-4bf6-b174-164bd4044a57",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "dae5cf79-f2cb-43c2-be70-503dbb810411",
+          "name": "List job errors",
+          "request": {
+            "name": "List job errors",
+            "description": {
+              "content": "Returns a paginated list of processing errors for the specified job. Use this after a job has been submitted to identify records that failed processing.\n\n> **ℹ️ When to call this.** Errors are populated for jobs in `SUCCEEDED_WITH_ERRORS` or `REJECTED` terminal status. Calling this endpoint for jobs in other statuses will return an empty list.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "eligibility",
+                "jobs",
+                ":job-id",
+                "errors"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "job-id",
+                  "description": "(Required) The UUID of the job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "cc384db6-98f3-4335-9e07-89575eabc68e",
+              "name": "OK. Returns a paginated list of job errors.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "errors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"change_number\": 1,\n      \"company_tax_id\": \"12.345.678/0001-99\",\n      \"error_type\": \"INVALID_FIELD\",\n      \"field_name\": \"email\",\n      \"field_value\": \"not-an-email\",\n      \"recovered_by\": null\n    }\n  ],\n  \"cursor\": null\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbd2c124-5a07-4b1c-8e35-7ed33be3305b",
+              "name": "Bad Request. Invalid `job-id` format.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "errors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f5af4b91-0584-42d1-be1f-bae7be70165a",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "errors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1cd34d20-90c3-456b-9421-cd74ed44763a",
+              "name": "Forbidden.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "errors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d9fb4cbd-e0d5-4c5b-818f-5290fc626cc9",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "eligibility",
+                    "jobs",
+                    ":job-id",
+                    "errors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "job-id",
+                      "description": "(Required) The UUID of the job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.clients.wellhub.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "63c0e8bb-c1e0-4725-89ca-69b6fcea2491",
+    "name": "Integrations Companies Jobs API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Integrations exposes a public API for Wellhub clients.\n\n### API Credentials Tutorial\n\nTo interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:\n\n1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.\n2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.\n3. **Use the token**: Include it in every subsequent request as follows:\n\n```\n'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE'\n```\n\nTokens are short-lived. Make sure to request a new one when the current one expires.",
+      "type": "text/plain"
+    }
+  }
+}

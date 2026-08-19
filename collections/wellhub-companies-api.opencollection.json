@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Integrations Companies API",
+    "version": "v1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Companies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List entity companies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/companies",
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated list of companies associated with the authenticated entity. Use the `cursor` parameter to paginate through results.\n\n> **⚠️ Multi-entity clients only.** This endpoint is restricted to clients with a multi-entity credential. Single-entity clients will receive a `400: operation not available` error. If you are a single-entity client, use `GET /v1/employees` instead to retrieve your employees directly."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

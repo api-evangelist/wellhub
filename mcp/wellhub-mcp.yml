@@ -2,39 +2,46 @@ generated: '2026-07-21'
 method: derived
 status: candidate
 source: openapi/wellhub-integrations-openapi-original.json
-note: No official Wellhub-hosted MCP server was found. This is a candidate tool list derived from the Integrations (Eligibility) OpenAPI operations.
+note: No official Wellhub-hosted MCP server was found. This is a candidate tool list derived from the
+  Integrations (Eligibility) OpenAPI operations.
 server:
   name: wellhub-integrations
   transport: http
   auth: oauth2-client-credentials
 tools:
-  - name: create_access_token
-    description: Exchange client credentials for a Bearer access token.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#POST /oauth/token
-  - name: list_companies
-    description: List entity companies (multi-entity clients).
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/companies
-  - name: list_company_employees
-    description: List employees for a company by tax ID.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/companies/{company-tax-id}/employees
-  - name: list_employees
-    description: List employees for a single entity.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/employees
-  - name: create_eligibility_job
-    description: Create a new eligibility job.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs
-  - name: add_job_items
-    description: Add eligibility items to a job (up to 500 per request).
-    source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/items
-  - name: list_job_items
-    description: List the items in an eligibility job.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/items
-  - name: submit_job
-    description: Submit an eligibility job for processing.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/submit
-  - name: get_job_status
-    description: Retrieve an eligibility job's status and statistics.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/status
-  - name: list_job_errors
-    description: List the errors for a submitted eligibility job.
-    source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/errors
+- name: create_access_token
+  description: Exchange client credentials for a Bearer access token.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#POST /oauth/token
+- name: list_companies
+  description: List entity companies (multi-entity clients).
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/companies
+- name: list_company_employees
+  description: List employees for a company by tax ID.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/companies/{company-tax-id}/employees
+- name: list_employees
+  description: List employees for a single entity.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/employees
+- name: create_eligibility_job
+  description: Create a new eligibility job.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs
+- name: add_job_items
+  description: Add eligibility items to a job (up to 500 per request).
+  source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/items
+- name: list_job_items
+  description: List the items in an eligibility job.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/items
+- name: submit_job
+  description: Submit an eligibility job for processing.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#POST /v1/eligibility/jobs/{job-id}/submit
+- name: get_job_status
+  description: Retrieve an eligibility job's status and statistics.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/status
+- name: list_job_errors
+  description: List the errors for a submitted eligibility job.
+  source_operation: openapi/wellhub-integrations-openapi-original.json#GET /v1/eligibility/jobs/{job-id}/errors
+deployment:
+  mode: none
+  verified: derived
+  tools: 10
+  checked: '2026-08-12'
+  source: catalog MCP census

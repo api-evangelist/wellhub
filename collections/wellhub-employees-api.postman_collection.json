@@ -1,0 +1,743 @@
+{
+  "item": [
+    {
+      "id": "5b56dde6-9aa8-46c4-a928-5b9f80345ee6",
+      "name": "Employees",
+      "description": {
+        "content": "Endpoints for listing employees associated with a company or entity.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "315a9371-a829-41e7-8ee2-ab4c2f1ba589",
+          "name": "List employees by company",
+          "request": {
+            "name": "List employees by company",
+            "description": {
+              "content": "Returns a paginated list of employees belonging to the specified company, identified by its tax ID. Only companies accessible to the authenticated entity are allowed.\n\n> **ℹ️ Availability.** This endpoint is available to **multi-entity clients** and **channel partners**. Single-entity clients should use `GET /v1/employees` instead.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "companies",
+                ":company-tax-id",
+                "employees"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "company-tax-id",
+                  "description": "(Required) The tax ID of the company whose employees should be listed."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "0e5a9798-6bf5-4c3a-8efc-c5014e439a11",
+              "name": "OK. Returns a paginated list of employees.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"abc123def456\",\n      \"full_name\": \"Jane Doe\",\n      \"email\": \"jane.doe@example.com\",\n      \"employee_id\": \"EMP001\",\n      \"national_id\": \"123.456.789-00\",\n      \"invitation_status\": \"accepted\",\n      \"mobile_number\": \"+5511999999999\",\n      \"cost_center\": \"CC-001\",\n      \"department\": \"Engineering\",\n      \"office_zip_code\": \"01310-100\",\n      \"payroll_id\": \"PAY-9876\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"deleted_at\": \"1957-01-24T19:16:14.648Z\",\n      \"updated_at\": \"2009-10-19T00:58:22.941Z\"\n    },\n    {\n      \"id\": \"abc123def456\",\n      \"full_name\": \"Jane Doe\",\n      \"email\": \"jane.doe@example.com\",\n      \"employee_id\": \"EMP001\",\n      \"national_id\": \"123.456.789-00\",\n      \"invitation_status\": \"accepted\",\n      \"mobile_number\": \"+5511999999999\",\n      \"cost_center\": \"CC-001\",\n      \"department\": \"Engineering\",\n      \"office_zip_code\": \"01310-100\",\n      \"payroll_id\": \"PAY-9876\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"deleted_at\": \"1975-11-20T19:57:58.038Z\",\n      \"updated_at\": \"1987-05-16T20:57:52.007Z\"\n    }\n  ],\n  \"cursor\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d7e20e75-5d40-461b-b0f1-d576f108d8c9",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "20324aa0-aa56-4c7f-8224-f88185b5da76",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "68d46bc8-72df-43c3-94a2-6dd8af98c295",
+              "name": "Forbidden. The authenticated entity does not have access to this company.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5fda2578-6705-41e4-9687-b6fe82552169",
+              "name": "Not Found. No company found with the given tax ID.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "de3879ed-df2b-465b-b6ac-53440ffa3ad8",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "companies",
+                    ":company-tax-id",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "company-tax-id",
+                      "description": "(Required) The tax ID of the company whose employees should be listed."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3573dee1-dfcb-4f23-bf27-016efcf93cf9",
+          "name": "List employees for a single entity",
+          "request": {
+            "name": "List employees for a single entity",
+            "description": {
+              "content": "Returns a paginated list of all employees belonging to the authenticated single-entity client. Use the `cursor` parameter to paginate through results.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "employees"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearerToken}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "718e6735-f936-410f-9cbb-2b30318e6154",
+              "name": "OK. Returns a paginated list of employees.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"abc123def456\",\n      \"full_name\": \"Jane Doe\",\n      \"email\": \"jane.doe@example.com\",\n      \"employee_id\": \"EMP001\",\n      \"national_id\": \"123.456.789-00\",\n      \"invitation_status\": \"accepted\",\n      \"mobile_number\": \"+5511999999999\",\n      \"cost_center\": \"CC-001\",\n      \"department\": \"Engineering\",\n      \"office_zip_code\": \"01310-100\",\n      \"payroll_id\": \"PAY-9876\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"deleted_at\": \"2005-06-15T20:44:18.024Z\",\n      \"updated_at\": \"1987-02-09T09:15:06.304Z\"\n    },\n    {\n      \"id\": \"abc123def456\",\n      \"full_name\": \"Jane Doe\",\n      \"email\": \"jane.doe@example.com\",\n      \"employee_id\": \"EMP001\",\n      \"national_id\": \"123.456.789-00\",\n      \"invitation_status\": \"accepted\",\n      \"mobile_number\": \"+5511999999999\",\n      \"cost_center\": \"CC-001\",\n      \"department\": \"Engineering\",\n      \"office_zip_code\": \"01310-100\",\n      \"payroll_id\": \"PAY-9876\",\n      \"discount_subset_id\": \"string\",\n      \"eligible_to_payroll\": true,\n      \"deleted_at\": \"1957-07-04T21:53:02.890Z\",\n      \"updated_at\": \"1953-01-31T08:00:16.915Z\"\n    }\n  ],\n  \"cursor\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "216e7bc4-2c02-47b3-8ae6-8f4c12ad2cc4",
+              "name": "Bad Request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d1dfc0f5-7d14-417c-8502-586f346f927f",
+              "name": "Unauthorized. Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "56b9923d-f61c-4d37-bb0a-f4b14cf29de4",
+              "name": "Forbidden. The authenticated entity does not have access to this resource.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e9ff12cf-91a2-404c-8345-7c8b31d6fdc8",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "employees"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.clients.wellhub.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "9ac66465-2985-41ac-a821-6d33bce1578c",
+    "name": "Integrations Companies Employees API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Integrations exposes a public API for Wellhub clients.\n\n### API Credentials Tutorial\n\nTo interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:\n\n1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.\n2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.\n3. **Use the token**: Include it in every subsequent request as follows:\n\n```\n'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE'\n```\n\nTokens are short-lived. Make sure to request a new one when the current one expires.",
+      "type": "text/plain"
+    }
+  }
+}

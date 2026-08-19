@@ -1,0 +1,46 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Integrations Companies OAuth API",
+    "version": "v1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "OAuth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create an access token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.clients.wellhub.com/oauth/token",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "client_id",
+                  "value": ""
+                },
+                {
+                  "name": "client_secret",
+                  "value": ""
+                },
+                {
+                  "name": "grant_type",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Exchanges client credentials for a Bearer access token using the `client_credentials` grant type. The returned token must be included in the `Authorization` header for all protected endpoints.\n\n> **⚠️ Content-Type required.** This request **must** be sent with `Content-Type: application/x-www-form-urlencoded`. If your HTTP client sets a session-level default of `application/json` (a common pattern), you must override it explicitly for this request — otherwise the server will return `400: invalid"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

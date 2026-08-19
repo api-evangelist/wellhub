@@ -1,0 +1,164 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Integrations Companies Jobs API",
+    "version": "v1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Jobs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new eligibility job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Creates a new eligibility batch job in draft state. After creation, add items to the job using `POST /v1/eligibility/jobs/{job-id}/items`, then submit it using `POST /v1/eligibility/jobs/{job-id}/submit`."
+        },
+        {
+          "info": {
+            "name": "List job items",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs/:job-id/items",
+            "params": [
+              {
+                "name": "job-id",
+                "value": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                "type": "path",
+                "description": "The UUID of the job."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated list of all items that have been added to the specified job."
+        },
+        {
+          "info": {
+            "name": "Add items to a job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs/:job-id/items",
+            "params": [
+              {
+                "name": "job-id",
+                "value": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                "type": "path",
+                "description": "The UUID of the draft job to add items to."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Adds a batch of employee records to an existing draft job. Each item represents a single employee operation (CREATE, UPDATE, or DELETE). A request must contain between 1 and 500 items. The `company_tax_id` and `operation` fields are required per item."
+        },
+        {
+          "info": {
+            "name": "Submit a job for processing",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs/:job-id/submit",
+            "params": [
+              {
+                "name": "job-id",
+                "value": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                "type": "path",
+                "description": "The UUID of the job to submit."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Submits a draft job for asynchronous processing. The job must have at least one item added before it can be submitted. Once submitted, the job transitions out of draft state and cannot be modified. Use `GET /v1/eligibility/jobs/{job-id}/status` to monitor progress."
+        },
+        {
+          "info": {
+            "name": "Get job status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs/:job-id/status",
+            "params": [
+              {
+                "name": "job-id",
+                "value": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                "type": "path",
+                "description": "The UUID of the job."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns the current status of a submitted job, including processing statistics (number of newcomers, leavers, and updaters processed)."
+        },
+        {
+          "info": {
+            "name": "List job errors",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/eligibility/jobs/:job-id/errors",
+            "params": [
+              {
+                "name": "job-id",
+                "value": "d46fb00b-79b1-4a89-9bd6-523889d0417f",
+                "type": "path",
+                "description": "The UUID of the job."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated list of processing errors for the specified job. Use this after a job has been submitted to identify records that failed processing.\n\n> **ℹ️ When to call this.** Errors are populated for jobs in `SUCCEEDED_WITH_ERRORS` or `REJECTED` terminal status. Calling this endpoint for jobs in other statuses will return an empty list."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

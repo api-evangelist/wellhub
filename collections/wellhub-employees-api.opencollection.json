@@ -1,0 +1,70 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Integrations Companies Employees API",
+    "version": "v1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Employees",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List employees by company",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/companies/:company-tax-id/employees",
+            "params": [
+              {
+                "name": "company-tax-id",
+                "value": "12.345.678/0001-99",
+                "type": "path",
+                "description": "The tax ID of the company whose employees should be listed."
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated list of employees belonging to the specified company, identified by its tax ID. Only companies accessible to the authenticated entity are allowed.\n\n> **ℹ️ Availability.** This endpoint is available to **multi-entity clients** and **channel partners**. Single-entity clients should use `GET /v1/employees` instead."
+        },
+        {
+          "info": {
+            "name": "List employees for a single entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.clients.wellhub.com/v1/employees",
+            "params": [
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor returned from the previous response. Omit to retrieve the first page."
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Returns a paginated list of all employees belonging to the authenticated single-entity client. Use the `cursor` parameter to paginate through results."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

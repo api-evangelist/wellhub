@@ -1,0 +1,363 @@
+{
+  "item": [
+    {
+      "id": "5783623e-04a2-4f8e-b831-394faa43ea8b",
+      "name": "OAuth",
+      "description": {
+        "content": "Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "ef8ddd6c-1d19-4639-a273-ab13c4b9ed84",
+          "name": "Create an access token",
+          "request": {
+            "name": "Create an access token",
+            "description": {
+              "content": "Exchanges client credentials for a Bearer access token using the `client_credentials` grant type. The returned token must be included in the `Authorization` header for all protected endpoints.\n\n> **⚠️ Content-Type required.** This request **must** be sent with `Content-Type: application/x-www-form-urlencoded`. If your HTTP client sets a session-level default of `application/json` (a common pattern), you must override it explicitly for this request — otherwise the server will return `400: invalid grant type` without further explanation.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "oauth",
+                "token"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "client_id",
+                  "value": "<uuid>",
+                  "description": "(Required) The unique UUID identifier for the client application."
+                },
+                {
+                  "disabled": false,
+                  "key": "client_secret",
+                  "value": "<string>",
+                  "description": "(Required) The secret associated with the client application."
+                },
+                {
+                  "disabled": false,
+                  "key": "grant_type",
+                  "value": "<string>",
+                  "description": "(Required) Must be `client_credentials`."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "bbefd70a-757c-42bc-a283-2b378c4509b3",
+              "name": "Token successfully created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "oauth",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The unique UUID identifier for the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_id",
+                      "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The secret associated with the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_secret",
+                      "value": "your-client-secret"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Must be `client_credentials`.",
+                        "type": "text/plain"
+                      },
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"access_token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 300\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f372f2d0-3696-49f8-b77b-4d8a60e7c313",
+              "name": "Bad Request. Possible causes:\n1. Missing or invalid `grant_type` (must be `client_credentials`).\n2. Malformed form data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "oauth",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The unique UUID identifier for the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_id",
+                      "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The secret associated with the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_secret",
+                      "value": "your-client-secret"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Must be `client_credentials`.",
+                        "type": "text/plain"
+                      },
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"invalid grant type\",\n  \"trace_id\": \"abc123\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2b0d387c-40be-4560-8019-3be6eae61a51",
+              "name": "Unauthorized. Invalid `client_id` or `client_secret`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "oauth",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The unique UUID identifier for the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_id",
+                      "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The secret associated with the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_secret",
+                      "value": "your-client-secret"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Must be `client_credentials`.",
+                        "type": "text/plain"
+                      },
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"invalid client credentials\",\n  \"trace_id\": \"abc123\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "046ca346-fa1d-4b0c-b183-57c32265514f",
+              "name": "Internal Server Error.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "oauth",
+                    "token"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The unique UUID identifier for the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_id",
+                      "value": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The secret associated with the client application.",
+                        "type": "text/plain"
+                      },
+                      "key": "client_secret",
+                      "value": "your-client-secret"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) Must be `client_credentials`.",
+                        "type": "text/plain"
+                      },
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"string\",\n  \"trace_id\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.clients.wellhub.com",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "d50138ee-ff76-4862-94e3-15505d174d1b",
+    "name": "Integrations Companies OAuth API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Integrations exposes a public API for Wellhub clients.\n\n### API Credentials Tutorial\n\nTo interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:\n\n1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.\n2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.\n3. **Use the token**: Include it in every subsequent request as follows:\n\n```\n'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE'\n```\n\nTokens are short-lived. Make sure to request a new one when the current one expires.",
+      "type": "text/plain"
+    }
+  }
+}
