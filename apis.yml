@@ -148,6 +148,8 @@ apis:
   humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
   baseURL: https://api.clients.wellhub.com
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -184,6 +186,8 @@ apis:
   humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
   baseURL: https://api.clients.wellhub.com
   tags:
+  - Authentication
+  tags_raw:
   - OAuth
   properties:
   - type: OpenAPI
