@@ -192,18 +192,16 @@ apis:
     url: agentic-access/wellhub-agentic-access.yml
   - type: LLMsTxt
     url: llms/wellhub-llms.txt
-- aid: wellhub:wellhub-oauth-api
-  name: Wellhub OAuth API
+- aid: wellhub:wellhub-o-auth-api
+  name: Wellhub O Auth API
   description: Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow.
   humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
   baseURL: https://api.clients.wellhub.com
   tags:
-  - Authentication
-  tags_raw:
-  - OAuth
+  - O Auth
   properties:
   - type: OpenAPI
-    url: openapi/wellhub-oauth-api-openapi.yml
+    url: openapi/wellhub-o-auth-api-openapi.yml
   - type: Documentation
     url: https://developer-hub.wellhub.com/docs/integrations/api/
   - type: APIReference
