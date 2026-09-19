@@ -57,6 +57,15 @@ tags:
 - Wellbeing
 - Corporate Benefits
 - Fitness
+- Human Resources
+- Eligibility
+- Employee Benefits
+tags_raw:
+- Company
+- Health
+- Wellbeing
+- Corporate Benefits
+- Fitness
 - HR
 - Eligibility
 - Employee Benefits
@@ -198,6 +207,8 @@ apis:
   humanURL: https://developer-hub.wellhub.com/docs/integrations/api/
   baseURL: https://api.clients.wellhub.com
   tags:
+  - Authentication
+  tags_raw:
   - OAuth
   properties:
   - type: OpenAPI
