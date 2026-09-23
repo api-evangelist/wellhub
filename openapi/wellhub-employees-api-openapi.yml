@@ -1,30 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Integrations Companies Employees API
-  description: 'Integrations exposes a public API for Wellhub clients.
-
-
-    ### API Credentials Tutorial
-
-
-    To interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:
-
-
-    1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.
-
-    2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.
-
-    3. **Use the token**: Include it in every subsequent request as follows:
-
-
-    ```
-
-    ''Authorization'': ''Bearer YOUR_ACCESS_TOKEN_HERE''
-
-    ```
-
-
-    Tokens are short-lived. Make sure to request a new one when the current one expires.'
+  title: Integrations Employees API
+  description: Integrations exposes a public API for Wellhub clients.
   version: v1.0.0
 servers:
 - url: https://api.clients.wellhub.com
@@ -94,6 +71,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: getV1CompaniesByCompanyTaxIdEmployees
+      x-operation-id-source: derived
   /v1/employees:
     get:
       tags:
@@ -140,8 +119,32 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: getV1Employees
+      x-operation-id-source: derived
 components:
   schemas:
+    EmployeesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+          description: List of employees for the current page.
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results. `null` if there are no more results.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
     Employee:
       type: object
       properties:
@@ -190,43 +193,24 @@ components:
           description: Payroll identifier for the employee.
           example: PAY-9876
         discount_subset_id:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Identifier for the discount subset applicable to this employee, if any.
         eligible_to_payroll:
           type: boolean
           description: Whether the employee is eligible for payroll deduction.
           example: true
         deleted_at:
-          type: string
+          type:
+          - string
+          - 'null'
           format: date-time
-          nullable: true
           description: Timestamp when the employee record was soft-deleted. `null` if active.
         updated_at:
           type: string
           format: date-time
           description: Timestamp of the last update to this employee record.
-    EmployeesResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Employee'
-          description: List of employees for the current page.
-        cursor:
-          type: string
-          nullable: true
-          description: Cursor for fetching the next page of results. `null` if there are no more results.
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
   securitySchemes:
     OAuth2:
       type: http

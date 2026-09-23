@@ -1,51 +1,13 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Integrations Companies Jobs API
-  description: 'Integrations exposes a public API for Wellhub clients.
-
-
-    ### API Credentials Tutorial
-
-
-    To interact with the API, you will need to obtain a Bearer Access Token. Follow these steps:
-
-
-    1. **Obtain your credentials**: Log in to your account and locate your `client_id` and `client_secret`.
-
-    2. **Request a token**: Call `POST /oauth/token` using the `client_credentials` grant type, passing your `client_id` and `client_secret` as form data.
-
-    3. **Use the token**: Include it in every subsequent request as follows:
-
-
-    ```
-
-    ''Authorization'': ''Bearer YOUR_ACCESS_TOKEN_HERE''
-
-    ```
-
-
-    Tokens are short-lived. Make sure to request a new one when the current one expires.'
+  title: Integrations Jobs API
+  description: Integrations exposes a public API for Wellhub clients.
   version: v1.0.0
 servers:
 - url: https://api.clients.wellhub.com
 tags:
 - name: Jobs
-  description: 'Endpoints for managing eligibility batch jobs. A job follows a lifecycle: Create → Add Items → Submit → Monitor.
-
-
-    After submission, the job transitions through the following statuses:
-
-    - `PENDING` — job has been submitted and is queued.
-
-    - `VALIDATING` — intermediate state while items are being validated.
-
-    - `SUCCEEDED` — all items processed successfully (terminal).
-
-    - `SUCCEEDED_WITH_ERRORS` — job has been partially processed, with error entries that must be fixed (terminal). → **Call `GET /errors` to review failures.**
-
-    - `REJECTED` — job was rejected due to validation issues (terminal). → **Call `GET /errors` to review failures.**
-
-    - `INTERNAL_SERVER_ERROR` — a server-side error occurred during processing; it is recommended to try again (terminal). → **Retry job submission.**'
+  description: Endpoints for managing eligibility batch jobs.
 paths:
   /v1/eligibility/jobs:
     post:
@@ -82,6 +44,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: postV1EligibilityJobs
+      x-operation-id-source: derived
   /v1/eligibility/jobs/{job-id}/items:
     get:
       tags:
@@ -142,6 +106,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: getV1EligibilityJobsByJobIdItems
+      x-operation-id-source: derived
     post:
       tags:
       - Jobs
@@ -232,6 +198,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: postV1EligibilityJobsByJobIdItems
+      x-operation-id-source: derived
   /v1/eligibility/jobs/{job-id}/submit:
     post:
       tags:
@@ -294,6 +262,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: postV1EligibilityJobsByJobIdSubmit
+      x-operation-id-source: derived
   /v1/eligibility/jobs/{job-id}/status:
     get:
       tags:
@@ -356,6 +326,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: getV1EligibilityJobsByJobIdStatus
+      x-operation-id-source: derived
   /v1/eligibility/jobs/{job-id}/errors:
     get:
       tags:
@@ -422,6 +394,8 @@ paths:
                 $ref: '#/components/schemas/HTTPError'
       security:
       - OAuth2: []
+      operationId: getV1EligibilityJobsByJobIdErrors
+      x-operation-id-source: derived
 components:
   schemas:
     Statistics:
@@ -439,22 +413,123 @@ components:
           type: integer
           description: Number of employees successfully updated.
           example: 5
-    MultipleErrorResponse:
+    JobItemResponse:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          description: Internal identifier for this job item.
+        job_id:
+          type: string
+          format: uuid
+          description: The UUID of the parent job.
+        operation:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          description: The operation applied for this item.
+        company_tax_id:
+          type: string
+          description: Tax ID of the associated company.
+        email:
+          type:
+          - string
+          - 'null'
+        full_name:
+          type:
+          - string
+          - 'null'
+        employee_id:
+          type:
+          - string
+          - 'null'
+        national_id:
+          type:
+          - string
+          - 'null'
+        payroll_id:
+          type:
+          - string
+          - 'null'
+        department:
+          type:
+          - string
+          - 'null'
+        office_zip_code:
+          type:
+          - string
+          - 'null'
+        cost_center:
+          type:
+          - string
+          - 'null'
+        mobile_number:
+          type:
+          - string
+          - 'null'
+        discount_subset_id:
+          type:
+          - string
+          - 'null'
+        eligible_to_payroll:
+          type:
+          - boolean
+          - 'null'
+        custom_fields:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        change_number:
+          type: integer
+          description: Sequential number assigned to this item within the job.
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when this item was added to the job.
+    JobResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the newly created job.
+          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: JSON path of the field that failed validation.
+          example: '[0].operation'
         message:
           type: string
-          description: High-level error summary.
-          example: validation error
-        reason:
-          type: string
-          description: Machine-readable error reason code.
-          example: invalid request body
-        errors:
+          description: Human-readable description of the validation failure.
+          example: must be one of CREATE, UPDATE, DELETE
+    JobItemsResponse:
+      type: object
+      properties:
+        data:
           type: array
           items:
-            $ref: '#/components/schemas/FieldError'
-          description: List of individual field-level validation errors.
+            $ref: '#/components/schemas/JobItemResponse'
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page. `null` if no more results.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
     CreateJobItem:
       type: object
       required:
@@ -520,140 +595,6 @@ components:
           type: object
           additionalProperties: true
           description: Optional map of additional custom attributes for the employee. Values are not validated by the platform.
-    JobItemsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobItemResponse'
-        cursor:
-          type: string
-          nullable: true
-          description: Cursor for the next page. `null` if no more results.
-    JobErrorsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobError'
-        cursor:
-          type: string
-          nullable: true
-          description: Cursor for the next page. `null` if no more results.
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
-    JobError:
-      type: object
-      properties:
-        change_number:
-          type: integer
-          nullable: true
-          description: The sequence number of the job item that caused the error.
-        company_tax_id:
-          type: string
-          nullable: true
-          description: Tax ID of the company associated with the failed item. Useful for tracing which company an error belongs to when a job spans multiple companies.
-          example: 12.345.678/0001-99
-        error_type:
-          type: string
-          description: Type/code of the error that occurred.
-        field_name:
-          type: string
-          nullable: true
-          description: Name of the field that caused the error, if applicable.
-        field_value:
-          type: string
-          nullable: true
-          description: Value of the field that caused the error, if applicable.
-        recovered_by:
-          type: string
-          nullable: true
-          description: Identifier of the process or user that recovered this error, if applicable.
-    JobItemResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Internal identifier for this job item.
-        job_id:
-          type: string
-          format: uuid
-          description: The UUID of the parent job.
-        operation:
-          type: string
-          enum:
-          - CREATE
-          - UPDATE
-          - DELETE
-          description: The operation applied for this item.
-        company_tax_id:
-          type: string
-          description: Tax ID of the associated company.
-        email:
-          type: string
-          nullable: true
-        full_name:
-          type: string
-          nullable: true
-        employee_id:
-          type: string
-          nullable: true
-        national_id:
-          type: string
-          nullable: true
-        payroll_id:
-          type: string
-          nullable: true
-        department:
-          type: string
-          nullable: true
-        office_zip_code:
-          type: string
-          nullable: true
-        cost_center:
-          type: string
-          nullable: true
-        mobile_number:
-          type: string
-          nullable: true
-        discount_subset_id:
-          type: string
-          nullable: true
-        eligible_to_payroll:
-          type: boolean
-          nullable: true
-        custom_fields:
-          type: object
-          additionalProperties: true
-          nullable: true
-        change_number:
-          type: integer
-          description: Sequential number assigned to this item within the job.
-        created_at:
-          type: string
-          format: date-time
-          description: Timestamp when this item was added to the job.
-    FieldError:
-      type: object
-      properties:
-        field:
-          type: string
-          description: JSON path of the field that failed validation.
-          example: '[0].operation'
-        message:
-          type: string
-          description: Human-readable description of the validation failure.
-          example: must be one of CREATE, UPDATE, DELETE
     JobStatusResponse:
       type: object
       properties:
@@ -678,14 +619,66 @@ components:
           description: Timestamp of the last status update.
         statistics:
           $ref: '#/components/schemas/Statistics'
-    JobResponse:
+    MultipleErrorResponse:
       type: object
       properties:
-        id:
+        message:
           type: string
-          format: uuid
-          description: The UUID of the newly created job.
-          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
+          description: High-level error summary.
+          example: validation error
+        reason:
+          type: string
+          description: Machine-readable error reason code.
+          example: invalid request body
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+          description: List of individual field-level validation errors.
+    JobErrorsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobError'
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page. `null` if no more results.
+    JobError:
+      type: object
+      properties:
+        change_number:
+          type:
+          - integer
+          - 'null'
+          description: The sequence number of the job item that caused the error.
+        company_tax_id:
+          type:
+          - string
+          - 'null'
+          description: Tax ID of the company associated with the failed item. Useful for tracing which company an error belongs to when a job spans multiple companies.
+          example: 12.345.678/0001-99
+        error_type:
+          type: string
+          description: Type/code of the error that occurred.
+        field_name:
+          type:
+          - string
+          - 'null'
+          description: Name of the field that caused the error, if applicable.
+        field_value:
+          type:
+          - string
+          - 'null'
+          description: Value of the field that caused the error, if applicable.
+        recovered_by:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the process or user that recovered this error, if applicable.
   securitySchemes:
     OAuth2:
       type: http

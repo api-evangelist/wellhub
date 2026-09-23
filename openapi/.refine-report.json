@@ -1,10 +1,7 @@
 {
   "provider": "wellhub",
   "sources": [
-    "wellhub-companies-api-openapi.yml",
-    "wellhub-employees-api-openapi.yml",
-    "wellhub-jobs-api-openapi.yml",
-    "wellhub-oauth-api-openapi.yml"
+    "_original/wellhub-integrations-openapi-original.json"
   ],
   "outputs": [
     "wellhub-companies-api-openapi.yml",
@@ -12,9 +9,21 @@
     "wellhub-jobs-api-openapi.yml",
     "wellhub-oauth-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "wellhub-integrations-openapi-original.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "superseded outputs removed: wellhub-o-auth-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 4 total)"
+  ],
+  "skipped": [
+    "wellhub-companies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "wellhub-employees-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "wellhub-jobs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "wellhub-o-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
