@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: Integrations O Auth API
+  title: Integrations OAuth API
   description: Integrations exposes a public API for Wellhub clients.
   version: v1.0.0
 servers:

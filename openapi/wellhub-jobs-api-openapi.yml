@@ -398,21 +398,99 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    Statistics:
+    MultipleErrorResponse:
       type: object
       properties:
-        newcomers:
-          type: integer
-          description: Number of employees successfully created.
-          example: 10
-        leavers:
-          type: integer
-          description: Number of employees successfully deleted.
-          example: 2
-        updaters:
-          type: integer
-          description: Number of employees successfully updated.
-          example: 5
+        message:
+          type: string
+          description: High-level error summary.
+          example: validation error
+        reason:
+          type: string
+          description: Machine-readable error reason code.
+          example: invalid request body
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+          description: List of individual field-level validation errors.
+    CreateJobItem:
+      type: object
+      required:
+      - operation
+      - company_tax_id
+      properties:
+        operation:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          description: The operation to perform for this employee record.
+        company_tax_id:
+          type: string
+          description: The tax ID of the company this employee belongs to.
+          example: 12.345.678/0001-99
+        email:
+          type: string
+          description: Employee's email address.
+          example: jane.doe@example.com
+        full_name:
+          type: string
+          description: Employee's full name.
+          example: Jane Doe
+        employee_id:
+          type: string
+          description: Client-defined employee identifier.
+          example: EMP001
+        national_id:
+          type: string
+          description: Employee's national identifier.
+          example: 123.456.789-00
+        payroll_id:
+          type: string
+          description: Payroll identifier for the employee.
+          example: PAY-9876
+        department:
+          type: string
+          description: Department the employee belongs to.
+          example: Engineering
+        office_zip_code:
+          type: string
+          description: ZIP code of the employee's office location.
+          example: 01310-100
+        cost_center:
+          type: string
+          description: Cost center associated with the employee.
+          example: CC-001
+        mobile_number:
+          type: string
+          description: Employee's mobile phone number.
+          example: '+5511999999999'
+        discount_subset_id:
+          type: string
+          description: Identifier for the discount subset applicable to this employee.
+          example: SUBSET-A
+        eligible_to_payroll:
+          type: boolean
+          description: Whether the employee is eligible for payroll deduction.
+          example: true
+        custom_fields:
+          type: object
+          additionalProperties: true
+          description: Optional map of additional custom attributes for the employee. Values are not validated by the platform.
+    JobItemsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobItemResponse'
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page. `null` if no more results.
     JobItemResponse:
       type: object
       properties:
@@ -490,14 +568,15 @@ components:
           type: string
           format: date-time
           description: Timestamp when this item was added to the job.
-    JobResponse:
+    HTTPError:
       type: object
       properties:
-        id:
+        error:
           type: string
-          format: uuid
-          description: The UUID of the newly created job.
-          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
     FieldError:
       type: object
       properties:
@@ -509,132 +588,14 @@ components:
           type: string
           description: Human-readable description of the validation failure.
           example: must be one of CREATE, UPDATE, DELETE
-    JobItemsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobItemResponse'
-        cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for the next page. `null` if no more results.
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
-    CreateJobItem:
-      type: object
-      required:
-      - operation
-      - company_tax_id
-      properties:
-        operation:
-          type: string
-          enum:
-          - CREATE
-          - UPDATE
-          - DELETE
-          description: The operation to perform for this employee record.
-        company_tax_id:
-          type: string
-          description: The tax ID of the company this employee belongs to.
-          example: 12.345.678/0001-99
-        email:
-          type: string
-          description: Employee's email address.
-          example: jane.doe@example.com
-        full_name:
-          type: string
-          description: Employee's full name.
-          example: Jane Doe
-        employee_id:
-          type: string
-          description: Client-defined employee identifier.
-          example: EMP001
-        national_id:
-          type: string
-          description: Employee's national identifier.
-          example: 123.456.789-00
-        payroll_id:
-          type: string
-          description: Payroll identifier for the employee.
-          example: PAY-9876
-        department:
-          type: string
-          description: Department the employee belongs to.
-          example: Engineering
-        office_zip_code:
-          type: string
-          description: ZIP code of the employee's office location.
-          example: 01310-100
-        cost_center:
-          type: string
-          description: Cost center associated with the employee.
-          example: CC-001
-        mobile_number:
-          type: string
-          description: Employee's mobile phone number.
-          example: '+5511999999999'
-        discount_subset_id:
-          type: string
-          description: Identifier for the discount subset applicable to this employee.
-          example: SUBSET-A
-        eligible_to_payroll:
-          type: boolean
-          description: Whether the employee is eligible for payroll deduction.
-          example: true
-        custom_fields:
-          type: object
-          additionalProperties: true
-          description: Optional map of additional custom attributes for the employee. Values are not validated by the platform.
-    JobStatusResponse:
+    JobResponse:
       type: object
       properties:
         id:
           type: string
           format: uuid
-          description: The UUID of the job.
-        status:
-          type: string
-          enum:
-          - PENDING
-          - VALIDATING
-          - SUCCEEDED
-          - SUCCEEDED_WITH_ERRORS
-          - REJECTED
-          - INTERNAL_SERVER_ERROR
-          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
-          example: SUCCEEDED
-        updated_at:
-          type: string
-          format: date-time
-          description: Timestamp of the last status update.
-        statistics:
-          $ref: '#/components/schemas/Statistics'
-    MultipleErrorResponse:
-      type: object
-      properties:
-        message:
-          type: string
-          description: High-level error summary.
-          example: validation error
-        reason:
-          type: string
-          description: Machine-readable error reason code.
-          example: invalid request body
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/FieldError'
-          description: List of individual field-level validation errors.
+          description: The UUID of the newly created job.
+          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
     JobErrorsResponse:
       type: object
       properties:
@@ -679,6 +640,45 @@ components:
           - string
           - 'null'
           description: Identifier of the process or user that recovered this error, if applicable.
+    JobStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the job.
+        status:
+          type: string
+          enum:
+          - PENDING
+          - VALIDATING
+          - SUCCEEDED
+          - SUCCEEDED_WITH_ERRORS
+          - REJECTED
+          - INTERNAL_SERVER_ERROR
+          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
+          example: SUCCEEDED
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp of the last status update.
+        statistics:
+          $ref: '#/components/schemas/Statistics'
+    Statistics:
+      type: object
+      properties:
+        newcomers:
+          type: integer
+          description: Number of employees successfully created.
+          example: 10
+        leavers:
+          type: integer
+          description: Number of employees successfully deleted.
+          example: 2
+        updaters:
+          type: integer
+          description: Number of employees successfully updated.
+          example: 5
   securitySchemes:
     OAuth2:
       type: http
