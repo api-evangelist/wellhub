@@ -398,6 +398,26 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    JobErrorsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobError'
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page. `null` if no more results.
+    JobResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the newly created job.
+          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
     MultipleErrorResponse:
       type: object
       properties:
@@ -414,6 +434,97 @@ components:
           items:
             $ref: '#/components/schemas/FieldError'
           description: List of individual field-level validation errors.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: JSON path of the field that failed validation.
+          example: '[0].operation'
+        message:
+          type: string
+          description: Human-readable description of the validation failure.
+          example: must be one of CREATE, UPDATE, DELETE
+    JobError:
+      type: object
+      properties:
+        change_number:
+          type:
+          - integer
+          - 'null'
+          description: The sequence number of the job item that caused the error.
+        company_tax_id:
+          type:
+          - string
+          - 'null'
+          description: Tax ID of the company associated with the failed item. Useful for tracing which company an error belongs to when a job spans multiple companies.
+          example: 12.345.678/0001-99
+        error_type:
+          type: string
+          description: Type/code of the error that occurred.
+        field_name:
+          type:
+          - string
+          - 'null'
+          description: Name of the field that caused the error, if applicable.
+        field_value:
+          type:
+          - string
+          - 'null'
+          description: Value of the field that caused the error, if applicable.
+        recovered_by:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the process or user that recovered this error, if applicable.
+    JobStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the job.
+        status:
+          type: string
+          enum:
+          - PENDING
+          - VALIDATING
+          - SUCCEEDED
+          - SUCCEEDED_WITH_ERRORS
+          - REJECTED
+          - INTERNAL_SERVER_ERROR
+          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
+          example: SUCCEEDED
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp of the last status update.
+        statistics:
+          $ref: '#/components/schemas/Statistics'
+    Statistics:
+      type: object
+      properties:
+        newcomers:
+          type: integer
+          description: Number of employees successfully created.
+          example: 10
+        leavers:
+          type: integer
+          description: Number of employees successfully deleted.
+          example: 2
+        updaters:
+          type: integer
+          description: Number of employees successfully updated.
+          example: 5
     CreateJobItem:
       type: object
       required:
@@ -479,18 +590,6 @@ components:
           type: object
           additionalProperties: true
           description: Optional map of additional custom attributes for the employee. Values are not validated by the platform.
-    JobItemsResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobItemResponse'
-        cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for the next page. `null` if no more results.
     JobItemResponse:
       type: object
       properties:
@@ -568,117 +667,18 @@ components:
           type: string
           format: date-time
           description: Timestamp when this item was added to the job.
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
-    FieldError:
-      type: object
-      properties:
-        field:
-          type: string
-          description: JSON path of the field that failed validation.
-          example: '[0].operation'
-        message:
-          type: string
-          description: Human-readable description of the validation failure.
-          example: must be one of CREATE, UPDATE, DELETE
-    JobResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The UUID of the newly created job.
-          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
-    JobErrorsResponse:
+    JobItemsResponse:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/JobError'
+            $ref: '#/components/schemas/JobItemResponse'
         cursor:
           type:
           - string
           - 'null'
           description: Cursor for the next page. `null` if no more results.
-    JobError:
-      type: object
-      properties:
-        change_number:
-          type:
-          - integer
-          - 'null'
-          description: The sequence number of the job item that caused the error.
-        company_tax_id:
-          type:
-          - string
-          - 'null'
-          description: Tax ID of the company associated with the failed item. Useful for tracing which company an error belongs to when a job spans multiple companies.
-          example: 12.345.678/0001-99
-        error_type:
-          type: string
-          description: Type/code of the error that occurred.
-        field_name:
-          type:
-          - string
-          - 'null'
-          description: Name of the field that caused the error, if applicable.
-        field_value:
-          type:
-          - string
-          - 'null'
-          description: Value of the field that caused the error, if applicable.
-        recovered_by:
-          type:
-          - string
-          - 'null'
-          description: Identifier of the process or user that recovered this error, if applicable.
-    JobStatusResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The UUID of the job.
-        status:
-          type: string
-          enum:
-          - PENDING
-          - VALIDATING
-          - SUCCEEDED
-          - SUCCEEDED_WITH_ERRORS
-          - REJECTED
-          - INTERNAL_SERVER_ERROR
-          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
-          example: SUCCEEDED
-        updated_at:
-          type: string
-          format: date-time
-          description: Timestamp of the last status update.
-        statistics:
-          $ref: '#/components/schemas/Statistics'
-    Statistics:
-      type: object
-      properties:
-        newcomers:
-          type: integer
-          description: Number of employees successfully created.
-          example: 10
-        leavers:
-          type: integer
-          description: Number of employees successfully deleted.
-          example: 2
-        updaters:
-          type: integer
-          description: Number of employees successfully updated.
-          example: 5
   securitySchemes:
     OAuth2:
       type: http
