@@ -245,6 +245,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/wellhub-capability-edges.yml
+  name: Wellhub Business Capability Map
 - type: Overlay
   url: overlays/wellhub-integrations-overlay.yaml
 - type: DeveloperPortal

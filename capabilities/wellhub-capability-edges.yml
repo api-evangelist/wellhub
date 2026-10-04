@@ -1,0 +1,26 @@
+slug: wellhub
+provider: Wellhub
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Employees
+  spec_file: wellhub-employees-api-openapi.yml
+  capability_id: BC-300.70
+  capability_id_l1: BC-300
+  capability_name: HR Operations Management
+  confidence: 0.7
+  evidence: 'GET /v1/companies/{company-tax-id}/employees  ''List employees by company''; vendor: ''lets
+    a client''s HR or payroll system sync employee eligibility to Wellhub'''
+  reason: Operations expose employee records maintained for a corporate wellbeing benefit, fed from the
+    client's HR/payroll system. Employee record maintenance for benefit eligibility sits under HR Operations;
+    could arguably be Compensation & Benefits, hence moderate confidence on the L2.
