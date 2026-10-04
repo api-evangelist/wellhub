@@ -136,15 +136,6 @@ components:
           - string
           - 'null'
           description: Cursor for fetching the next page of results. `null` if there are no more results.
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
     Employee:
       type: object
       properties:
@@ -211,6 +202,15 @@ components:
           type: string
           format: date-time
           description: Timestamp of the last update to this employee record.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
   securitySchemes:
     OAuth2:
       type: http

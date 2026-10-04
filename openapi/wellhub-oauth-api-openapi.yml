@@ -88,15 +88,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
     TokenResponse:
       type: object
       required:
@@ -116,6 +107,15 @@ components:
           type: integer
           description: Token lifetime in seconds.
           example: 300
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
   securitySchemes:
     OAuth2:
       type: http

@@ -70,15 +70,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    HTTPError:
-      type: object
-      properties:
-        error:
-          type: string
-          description: Human-readable error message.
-        trace_id:
-          type: string
-          description: Unique trace identifier for debugging and support.
     Company:
       type: object
       properties:
@@ -103,6 +94,15 @@ components:
           - string
           - 'null'
           description: Cursor for fetching the next page of results. `null` if there are no more results.
+    HTTPError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+        trace_id:
+          type: string
+          description: Unique trace identifier for debugging and support.
   securitySchemes:
     OAuth2:
       type: http
