@@ -398,126 +398,33 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    JobResponse:
+    Statistics:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-          description: The UUID of the newly created job.
-          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
-    JobItemResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Internal identifier for this job item.
-        job_id:
-          type: string
-          format: uuid
-          description: The UUID of the parent job.
-        operation:
-          type: string
-          enum:
-          - CREATE
-          - UPDATE
-          - DELETE
-          description: The operation applied for this item.
-        company_tax_id:
-          type: string
-          description: Tax ID of the associated company.
-        email:
-          type:
-          - string
-          - 'null'
-        full_name:
-          type:
-          - string
-          - 'null'
-        employee_id:
-          type:
-          - string
-          - 'null'
-        national_id:
-          type:
-          - string
-          - 'null'
-        payroll_id:
-          type:
-          - string
-          - 'null'
-        department:
-          type:
-          - string
-          - 'null'
-        office_zip_code:
-          type:
-          - string
-          - 'null'
-        cost_center:
-          type:
-          - string
-          - 'null'
-        mobile_number:
-          type:
-          - string
-          - 'null'
-        discount_subset_id:
-          type:
-          - string
-          - 'null'
-        eligible_to_payroll:
-          type:
-          - boolean
-          - 'null'
-        custom_fields:
-          type:
-          - object
-          - 'null'
-          additionalProperties: true
-        change_number:
+        newcomers:
           type: integer
-          description: Sequential number assigned to this item within the job.
-        created_at:
-          type: string
-          format: date-time
-          description: Timestamp when this item was added to the job.
-    FieldError:
+          description: Number of employees successfully created.
+          example: 10
+        leavers:
+          type: integer
+          description: Number of employees successfully deleted.
+          example: 2
+        updaters:
+          type: integer
+          description: Number of employees successfully updated.
+          example: 5
+    JobItemsResponse:
       type: object
       properties:
-        field:
-          type: string
-          description: JSON path of the field that failed validation.
-          example: '[0].operation'
-        message:
-          type: string
-          description: Human-readable description of the validation failure.
-          example: must be one of CREATE, UPDATE, DELETE
-    JobStatusResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The UUID of the job.
-        status:
-          type: string
-          enum:
-          - PENDING
-          - VALIDATING
-          - SUCCEEDED
-          - SUCCEEDED_WITH_ERRORS
-          - REJECTED
-          - INTERNAL_SERVER_ERROR
-          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
-          example: SUCCEEDED
-        updated_at:
-          type: string
-          format: date-time
-          description: Timestamp of the last status update.
-        statistics:
-          $ref: '#/components/schemas/Statistics'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobItemResponse'
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for the next page. `null` if no more results.
     MultipleErrorResponse:
       type: object
       properties:
@@ -534,6 +441,25 @@ components:
           items:
             $ref: '#/components/schemas/FieldError'
           description: List of individual field-level validation errors.
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: JSON path of the field that failed validation.
+          example: '[0].operation'
+        message:
+          type: string
+          description: Human-readable description of the validation failure.
+          example: must be one of CREATE, UPDATE, DELETE
+    JobResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the newly created job.
+          example: d46fb00b-79b1-4a89-9bd6-523889d0417f
     CreateJobItem:
       type: object
       required:
@@ -620,6 +546,30 @@ components:
         trace_id:
           type: string
           description: Unique trace identifier for debugging and support.
+    JobStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the job.
+        status:
+          type: string
+          enum:
+          - PENDING
+          - VALIDATING
+          - SUCCEEDED
+          - SUCCEEDED_WITH_ERRORS
+          - REJECTED
+          - INTERNAL_SERVER_ERROR
+          description: 'Current processing status of the job. Lifecycle: `PENDING` → `VALIDATING` → `SUCCEEDED` / `SUCCEEDED_WITH_ERRORS` / `REJECTED` / `INTERNAL_SERVER_ERROR`.'
+          example: SUCCEEDED
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp of the last status update.
+        statistics:
+          $ref: '#/components/schemas/Statistics'
     JobError:
       type: object
       properties:
@@ -652,33 +602,83 @@ components:
           - string
           - 'null'
           description: Identifier of the process or user that recovered this error, if applicable.
-    JobItemsResponse:
+    JobItemResponse:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/JobItemResponse'
-        cursor:
+        id:
+          type: string
+          format: uuid
+          description: Internal identifier for this job item.
+        job_id:
+          type: string
+          format: uuid
+          description: The UUID of the parent job.
+        operation:
+          type: string
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+          description: The operation applied for this item.
+        company_tax_id:
+          type: string
+          description: Tax ID of the associated company.
+        email:
           type:
           - string
           - 'null'
-          description: Cursor for the next page. `null` if no more results.
-    Statistics:
-      type: object
-      properties:
-        newcomers:
+        full_name:
+          type:
+          - string
+          - 'null'
+        employee_id:
+          type:
+          - string
+          - 'null'
+        national_id:
+          type:
+          - string
+          - 'null'
+        payroll_id:
+          type:
+          - string
+          - 'null'
+        department:
+          type:
+          - string
+          - 'null'
+        office_zip_code:
+          type:
+          - string
+          - 'null'
+        cost_center:
+          type:
+          - string
+          - 'null'
+        mobile_number:
+          type:
+          - string
+          - 'null'
+        discount_subset_id:
+          type:
+          - string
+          - 'null'
+        eligible_to_payroll:
+          type:
+          - boolean
+          - 'null'
+        custom_fields:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        change_number:
           type: integer
-          description: Number of employees successfully created.
-          example: 10
-        leavers:
-          type: integer
-          description: Number of employees successfully deleted.
-          example: 2
-        updaters:
-          type: integer
-          description: Number of employees successfully updated.
-          example: 5
+          description: Sequential number assigned to this item within the job.
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when this item was added to the job.
   securitySchemes:
     OAuth2:
       type: http

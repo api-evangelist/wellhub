@@ -123,19 +123,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    EmployeesResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Employee'
-          description: List of employees for the current page.
-        cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page of results. `null` if there are no more results.
     Employee:
       type: object
       properties:
@@ -202,6 +189,19 @@ components:
           type: string
           format: date-time
           description: Timestamp of the last update to this employee record.
+    EmployeesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+          description: List of employees for the current page.
+        cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page of results. `null` if there are no more results.
     HTTPError:
       type: object
       properties:
