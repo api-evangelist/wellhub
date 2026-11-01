@@ -64,6 +64,132 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Wellhub is a company surfaced as a portfolio company of atomico, hv-capital, softbank-vision-fund and added to the API Evangelist network as a stub for enrichment. Sector: health. This profile is a lead awaiting the enrichment pipeline.
+Wellhub (formerly Gympass) is a corporate wellbeing platform that gives employees access to a network of fitness, mindfulness, therapy, nutrition, and sleep partners through their employer's benefits program. For system integrators it publishes a public Integrations API: an OAuth2 client-credentials REST API that lets a client's HR or payroll system sync employee eligibility to Wellhub in real time, so employees gain access on hire and lose it on termination. The API models eligibility as batch jobs (create a job, add up to 500 items, submit, then poll status and read per-record errors) and is documented on a Stoplight-powered developer hub with a downloadable OpenAPI 3.0 contract and a synthetic-data Sandbox. Wellhub is backed by Atomico, HV Capital, and SoftBank Vision Fund.
 
-Backed by: atomico, hv-capital, softbank-vision-fund — https://wellhub.com
+**Areas:** Company · Health · Wellbeing · Corporate Benefits · Fitness · Human Resources · Eligibility · Employee Benefits
+
+## Wellhub on APIs.io
+
+Everything profiled for Wellhub is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/wellhub/](https://apis.io/providers/wellhub/)** — or go straight to one of the APIs or properties below.
+
+### APIs (4)
+
+- [Wellhub Companies API](https://apis.io/apis/wellhub/wellhub-companies-api/) — Endpoints for listing companies associated with the authenticated entity.
+- [Wellhub Employees API](https://apis.io/apis/wellhub/wellhub-employees-api/) — Endpoints for listing employees associated with a company or entity.
+- [Wellhub Jobs API](https://apis.io/apis/wellhub/wellhub-jobs-api/) — Endpoints for managing eligibility batch jobs. A job follows a lifecycle: Create → Add Items → Submit → Monitor. After submission, the job transitions…
+- [Wellhub O Auth API](https://apis.io/apis/wellhub/wellhub-oauth-api/) — Endpoints for obtaining access tokens using the OAuth 2.0 Client Credentials flow.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [wellhub-integrations](https://apis.io/servers/wellhub/wellhub-integrations/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Wellhub Agentic Access](https://apis.io/agentic-access/wellhub/wellhub-agentic-access/)
+
+#### Collections (4)
+
+Postman and Open Collection request collections.
+
+- [Integrations Companies API](https://apis.io/collections/wellhub/open-wellhub-companies-api/)
+- [Integrations Companies Employees API](https://apis.io/collections/wellhub/open-wellhub-employees-api/)
+- [Integrations Companies Jobs API](https://apis.io/collections/wellhub/open-wellhub-jobs-api/)
+- [Integrations Companies OAuth API](https://apis.io/collections/wellhub/open-wellhub-oauth-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Wellhub Integrations Overlay](https://apis.io/overlays/wellhub/wellhub-integrations-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Wellhub Authentication](https://apis.io/security/wellhub/wellhub-authentication/)
+- [Wellhub Domain Security](https://apis.io/security/wellhub/wellhub-domain-security/)
+- [Wellhub Trust Center](https://apis.io/security/wellhub/wellhub-trust-center/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Wellhub Rate Limits](https://apis.io/rate-limits/wellhub/wellhub-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://wellhub.com)
+- [Documentation](https://developer-hub.wellhub.com/docs/integrations/api/)
+- [Getting started](https://developer-hub.wellhub.com/docs/integrations/api/getting-started/)
+- [API reference](https://developer-hub.wellhub.com/docs/integrations/api/eligibility/)
+- [Sign up](https://clients.wellhub.com/)
+- [Support](https://www.gympass.com/us/faq)
+- [Blog](https://www.gympass.com/us/blog)
+- [Compliance](https://security.wellhub.com/)
+- [Terms of service](https://wellhub.com/en-us/terms/)
+- [Privacy policy](https://wellhub.com/en-us/privacy/)
+
+## API Evangelist rating
+
+**Kin Score 44.0** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 49.9 |
+| Contract governance | 4.5 |
+| Operational transparency | 31.6 |
+| Developer ergonomics | 49.4 |
+| Access clarity | 43.4 |
+
+**Agent readiness 35.2** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | paginated |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 23.4** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/wellhub/](https://apis.io/providers/wellhub/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Wellhub: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/wellhub/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
